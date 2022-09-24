@@ -1,0 +1,71 @@
+can_i_use <- function(fun) {
+	cli::cli_div(theme = cli_theme_caniuse())
+
+	fun_text <- unquote(rlang::expr_text(rlang::enexpr(fun)))
+	pkg <- determine_package(fun)
+	namespaced_fun <- if (grepl("[[:alnum:]\\.]+::", fun_text)) {
+		fun_text
+	} else {
+		paste0(pkg, "::", fun_text)
+	}
+
+	deps <- desc::desc_get_deps()
+
+	if (!in_deps(pkg, deps = deps)) {
+		cli::cli_inform(c(
+			"x" = paste(
+				"You can't use {.fun {fun_text}},",
+				"because your package doesn't depend on {.pkg {pkg}}."
+			),
+			"*" = 'Use {.run usethis::use_package("{pkg}")} to add it as a dependency.'
+		))
+
+		return(invisible(FALSE))
+	}
+
+	if (in_suggests(pkg, deps = deps)) {
+		cli::cli_inform(c(
+			"i" = paste(
+				"You can use {.fun {fun_text}} {.emph carefully},",
+				"because your package suggests {.pkg {pkg}}."
+			),
+			"*" = paste(
+				'In your package code, use {.code rlang::is_installed("{pkg}")}',
+				'or {.code rlang::check_installed("{pkg}")} to test if {.pkg {pkg}} is installed.'
+			),
+			"*" = "Then refer to it with {.fun {namespaced_fun}}."
+		))
+
+		return(invisible(TRUE))
+	}
+
+	if (is_imported(fun, from = pkg)) {
+		cli::cli_inform(c(
+			"v" = "You can use {.fun {fun_text}}, because your package depends on {.pkg {pkg}}.",
+			"i" = "You don't even need to include a namespace, because you used {.code importFrom}!"
+		))
+
+		return(invisible(TRUE))
+	}
+
+	cli::cli_inform(c(
+		"v" = "You can use {.fun {fun_text}}, because your package depends on {.pkg {pkg}}.",
+		"*" = "Refer to it with {.fun {namespaced_fun}}."
+	))
+
+	invisible(TRUE)
+}
+
+unquote <- function(x) {
+	gsub("[\"'`]", "", x, perl = TRUE)
+}
+
+cli_theme_caniuse <- function() {
+	list(
+		span.fun = list(color = "blue"),
+		span.run = list(transform = function(x) {
+			x <- cli::builtin_theme()$span.run$transform(x)
+			cli::builtin_theme()$span.code$transform(x)
+		})
+	)
+}
