@@ -1,0 +1,4 @@
+Name: Can I use this function?
+Description: Checks if the currently selected function can be used in your package, or if you need to add a dependency.
+Binding: can_i_use_addin
+Interactive: false
