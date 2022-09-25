@@ -3,5 +3,4 @@
 S3method(determine_package,"function")
 S3method(determine_package,character)
 S3method(determine_package,default)
-importFrom(desc,desc_get_deps)
 importFrom(rlang,"%||%")
