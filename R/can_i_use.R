@@ -16,6 +16,7 @@ can_i_use <- function(fun, fun_text = NULL) {
 
 	if (identical(pkg, desc::desc_get_field("Package"))) {
 		cli::cli_inform(c(
+			"",
 			"i" = "{.pkg {pkg}} is the current package.",
 			"v" = paste(
 				"You can use {.var {fun_text}},",
@@ -29,6 +30,7 @@ can_i_use <- function(fun, fun_text = NULL) {
 
 	if (identical(pkg, "base")) {
 		cli::cli_inform(c(
+			"",
 			"i" = "{.pkg base} is an implicit dependency of all R packages.",
 			"v" = "You can use {.var {fun_text}}, because it's a function from {.pkg base}.",
 			"v" = "You don't even need to include a namespace!"
@@ -41,6 +43,7 @@ can_i_use <- function(fun, fun_text = NULL) {
 
 	if (!in_deps(pkg, deps = deps)) {
 		cli::cli_inform(c(
+			"",
 			"i" = "{.pkg {pkg}} is not a declared dependency.",
 			"x" = paste(
 				"You can't use {.var {fun_text}},",
@@ -54,6 +57,7 @@ can_i_use <- function(fun, fun_text = NULL) {
 
 	if (in_suggests(pkg, deps = deps)) {
 		cli::cli_inform(c(
+			"",
 			"i" = "{.pkg {pkg}} is a suggested dependency.",
 			"!" = paste(
 				"You can use {.var {fun_text}} {.emph carefully},",
@@ -71,6 +75,7 @@ can_i_use <- function(fun, fun_text = NULL) {
 
 	if (is_imported(bare_fun, from = pkg)) {
 		cli::cli_inform(c(
+			"",
 			"i" = "{.pkg {pkg}} is a declared dependency.",
 			"v" = "You can use {.var {fun_text}}, because your package depends on {.pkg {pkg}}.",
 			"v" = "You don't even need to include a namespace, because you used {.code importFrom}!"
@@ -80,6 +85,7 @@ can_i_use <- function(fun, fun_text = NULL) {
 	}
 
 	cli::cli_inform(c(
+		"",
 		"i" = "{.pkg {pkg}} is a declared dependency.",
 		"v" = "You can use {.var {fun_text}}, because your package depends on {.pkg {pkg}}.",
 		"*" = "In your package code, refer to it with {.var {namespaced_fun}}."
