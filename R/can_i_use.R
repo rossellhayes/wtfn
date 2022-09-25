@@ -5,10 +5,13 @@ can_i_use <- function(fun, fun_text = NULL) {
 		fun_text <- unquote(rlang::expr_text(rlang::enexpr(fun)))
 	}
 	pkg <- determine_package(fun)
-	namespaced_fun <- if (grepl("[[:alnum:]\\.]+::", fun_text)) {
-		fun_text
+
+	if (grepl("[[:alnum:]\\.]+:::?", fun_text)) {
+		namespaced_fun <- fun_text
+		bare_fun <- gsub("[[:alnum:]\\.]+:::?", "", fun_text)
 	} else {
-		paste0(pkg, "::", fun_text)
+		namespaced_fun <- paste0(pkg, "::", fun_text)
+		bare_fun <- fun_text
 	}
 
 	if (identical(pkg, desc::desc_get_field("Package"))) {
@@ -66,7 +69,7 @@ can_i_use <- function(fun, fun_text = NULL) {
 		return(invisible(TRUE))
 	}
 
-	if (is_imported(fun, from = pkg)) {
+	if (is_imported(bare_fun, from = pkg)) {
 		cli::cli_inform(c(
 			"i" = "{.pkg {pkg}} is a declared dependency.",
 			"v" = "You can use {.var {fun_text}}, because your package depends on {.pkg {pkg}}.",
