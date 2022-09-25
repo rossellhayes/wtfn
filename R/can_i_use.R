@@ -24,6 +24,16 @@ can_i_use <- function(fun, fun_text = NULL) {
 		return(invisible(TRUE))
 	}
 
+	if (identical(pkg, "base")) {
+		cli::cli_inform(c(
+			"i" = "{.pkg base} is an implicit dependency of all R packages.",
+			"v" = "You can use {.var {fun_text}}, because it's a function from {.pkg base}.",
+			"v" = "You don't even need to include a namespace!"
+		))
+
+		return(invisible(TRUE))
+	}
+
 	deps <- desc::desc_get_deps()
 
 	if (!in_deps(pkg, deps = deps)) {
