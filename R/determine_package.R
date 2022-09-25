@@ -22,6 +22,8 @@ determine_package.character <- function(fun) {
 
 	fun_text <- fun
 
+	fun <- make_syntactic_name(fun)
+
 	fun <- tryCatch(
 		eval(rlang::parse_expr(fun)),
 		error = function(e) {
@@ -45,4 +47,20 @@ determine_package.character <- function(fun) {
 #' @export
 determine_package.default <- function(fun) {
 	determine_package.character(as.character(fun))
+}
+
+make_syntactic_name <- function(fun) {
+	namespace <- ""
+
+	if (grepl("[[:alnum:]\\.]+:::?", fun)) {
+		namespace <- regmatches(
+			fun,
+			regexpr("[[:alnum:]\\.]+:::?", fun)
+		)
+		fun <- sub("[[:alnum:]\\.]+:::?", "", fun)
+	}
+
+	fun <- rlang::expr_text(rlang::sym(fun))
+
+	paste0(namespace, fun)
 }
