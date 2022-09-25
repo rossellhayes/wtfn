@@ -8,6 +8,14 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/rossellhayes/caniuse}
+  \item Report bugs at \url{https://github.com/rossellhayes/caniuse/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Alexander Rossell Hayes \email{alexander@rossellhayes.com} (\href{https://orcid.org/0000-0001-9412-0457}{ORCID}) [copyright holder]
 
