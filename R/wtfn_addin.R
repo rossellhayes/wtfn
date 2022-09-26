@@ -1,7 +1,7 @@
-can_i_use_addin <- function() {
+wtfn_addin <- function() {
 	fun <- function_under_cursor()
 
-	can_i_use(fun, fun_text = fun)
+	wtfn(fun, fun_text = fun)
 }
 
 function_under_cursor <- function() {

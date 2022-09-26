@@ -1,4 +1,4 @@
-can_i_use <- function(fun, fun_text = NULL) {
+wtfn <- function(fun, fun_text = NULL) {
 	if (is.null(fun_text)) {
 		fun_text <- unquote(rlang::expr_text(rlang::enexpr(fun)))
 	}

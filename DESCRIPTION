@@ -1,5 +1,5 @@
-Package: caniuse
-Title: What the Package Does (One Line, Title Case)
+Package: wtfn
+Title: Where's This Function?
 Version: 0.0.0.9000
 Authors@R: 
     person("Alexander", "Rossell Hayes", , "alexander@rossellhayes.com", role = c("aut", "cre", "cph"),
