@@ -4,6 +4,16 @@ determine_package <- function(fun) {
 
 #' @export
 determine_package.function <- function(fun) {
+	if (!identical(typeof(fun), "closure")) {
+		# Normal functions (e.g. `mean`) and infix functions (e.g. `%in%`)
+		# have class `function` and type `closure`.
+		# Special operators (e.g. `+` or `<-`) also have class `function`,
+		# but type `builtin` or `special`.
+		# Special operators can't be exported from packages,
+		# so if a function does not have type `closure`, it must be from `base`.
+		return("base")
+	}
+
 	env <- environment(fun)
 
 	if (is.null(env)) {
