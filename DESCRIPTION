@@ -5,8 +5,7 @@ Authors@R:
     person("Alexander", "Rossell Hayes", , "alexander@rossellhayes.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-9412-0457"))
 Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 URL: https://github.com/rossellhayes/wtfn
 BugReports: https://github.com/rossellhayes/wtfn/issues
 Imports: 
