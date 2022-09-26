@@ -18,12 +18,8 @@ can_i_use <- function(fun, fun_text = NULL) {
 
 	if (identical(pkg, desc::desc_get_field("Package"))) {
 		cli::cli_inform(c(
-			"i" = "{.pkg {pkg}} is the current package.",
-			"v" = paste(
-				"You can use {.var {fun_text}},",
-				"because it's a function from {.pkg {pkg}},",
-				"the package you're currently developing."
-			)
+			"i" = "{.strong {.pkg {pkg}} is the current package.}",
+			"v" = "You can use {.var {fun_text}}. You don't even need to include a namespace!"
 		))
 
 		return(invisible(TRUE))
@@ -31,19 +27,18 @@ can_i_use <- function(fun, fun_text = NULL) {
 
 	if (identical(pkg, "base")) {
 		cli::cli_inform(c(
-			"i" = "{.pkg base} is an implicit dependency of all R packages.",
-			"v" = "You can use {.var {fun_text}}, because it's a function from {.pkg base}.",
-			"v" = "You don't even need to include a namespace!"
+			"i" = "{.strong {.pkg base} functions can be used in all R packages.}",
+			"v" = "You can use {.var {fun_text}}. You don't even need to include a namespace!"
 		))
 
 		return(invisible(TRUE))
 	}
 
-	deps <- desc::desc_get_deps()
+	dependency_type <- dependency_type(pkg)
 
-	if (!in_deps(pkg, deps = deps)) {
+	if (length(dependency_type) == 0) {
 		cli::cli_inform(c(
-			"i" = "{.pkg {pkg}} is not a declared dependency.",
+			"i" = "{.strong {.pkg {pkg}} is not a declared dependency.}",
 			"x" = paste(
 				"You can't use {.var {fun_text}},",
 				"because your package doesn't depend on {.pkg {pkg}}."
@@ -54,40 +49,40 @@ can_i_use <- function(fun, fun_text = NULL) {
 		return(invisible(FALSE))
 	}
 
-	if (in_suggests(pkg, deps = deps)) {
+	cli::cli_inform(
+		c("i" = "{.strong {.pkg {pkg}} is declared in {.val {dependency_type}}.}")
+	)
+
+	if (dependency_type %in% c("Imports", "Depends")) {
+		if (is_imported(bare_fun, from = pkg)) {
+			cli::cli_inform(c(
+				"i" = "{.strong {.var {fun_text}} is imported from {.pkg {pkg}} using {.var importFrom}.}",
+				"v" = "You can use {.var {fun_text}}. You don't even need to include a namespace!"
+			))
+
+			return(invisible(TRUE))
+		}
+
 		cli::cli_inform(c(
-			"i" = "{.pkg {pkg}} is a suggested dependency.",
-			"!" = paste(
-				"You can use {.var {fun_text}} {.emph carefully},",
-				"because your package suggests {.pkg {pkg}}."
-			),
-			"*" = paste(
-				'In your package code, use {.code rlang::is_installed("{pkg}")}',
-				'or {.code rlang::check_installed("{pkg}")} to test if {.pkg {pkg}} is installed.'
-			),
-			"*" = "Then refer to it with {.var {namespaced_fun}}."
+			"v" = "You can use {.var {fun_text}}.",
+			"*" = "In your package code, refer to it with {.var {namespaced_fun}}."
 		))
 
 		return(invisible(TRUE))
 	}
 
-	if (is_imported(bare_fun, from = pkg)) {
-		cli::cli_inform(c(
-			"i" = "{.pkg {pkg}} is a declared dependency.",
-			"v" = "You can use {.var {fun_text}}, because your package depends on {.pkg {pkg}}.",
-			"v" = "You don't even need to include a namespace, because you used {.code importFrom}!"
-		))
-
-		return(invisible(TRUE))
-	}
-
+	# If we reach this point,
+	# `dependency_type` is "Suggests", "Enhances", "LinkingTo" or something weird
 	cli::cli_inform(c(
-		"i" = "{.pkg {pkg}} is a declared dependency.",
-		"v" = "You can use {.var {fun_text}}, because your package depends on {.pkg {pkg}}.",
-		"*" = "In your package code, refer to it with {.var {namespaced_fun}}."
+		"!" = "You can use {.var {fun_text}} {.emph carefully}.",
+		"*" = paste(
+			'In your package code, use {.code rlang::is_installed("{pkg}")}',
+			'or {.code rlang::check_installed("{pkg}")} to test if {.pkg {pkg}} is installed.'
+		),
+		"*" = "Then refer to it with {.var {namespaced_fun}}."
 	))
 
-	invisible(TRUE)
+	return(invisible(TRUE))
 }
 
 unquote <- function(x) {
