@@ -14,6 +14,7 @@ can_i_use <- function(fun, fun_text = NULL) {
 
 	cli::cli_div(theme = cli_theme_caniuse())
 	cli::cat_line()
+	cli::cli_inform(c("i" = "{.strong {.var {fun_text}} is from {.pkg {pkg}}.}"))
 
 	if (identical(pkg, desc::desc_get_field("Package"))) {
 		cli::cli_inform(c(
