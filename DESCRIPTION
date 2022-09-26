@@ -7,8 +7,8 @@ Authors@R:
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
-URL: https://github.com/rossellhayes/caniuse
-BugReports: https://github.com/rossellhayes/caniuse/issues
+URL: https://github.com/rossellhayes/wtfn
+BugReports: https://github.com/rossellhayes/wtfn/issues
 Imports: 
     cli,
     desc,
