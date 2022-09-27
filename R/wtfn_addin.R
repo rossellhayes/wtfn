@@ -1,7 +1,5 @@
 wtfn_addin <- function() {
-	fun <- function_under_cursor()
-
-	wtfn(fun, fun_text = fun)
+	wtfn(function_under_cursor())
 }
 
 function_under_cursor <- function() {

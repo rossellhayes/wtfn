@@ -13,6 +13,7 @@ Imports:
     desc,
     fs,
     purrr,
+    R6,
     rlang,
     utils
 Suggests: 
