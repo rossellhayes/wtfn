@@ -28,6 +28,10 @@ wtfn_function <- R6Class(
 			}
 
 			fun <- self$syntactic_name
+			fun <- purrr::possibly(eval, otherwise = NULL)(rlang::parse_expr(fun))
+
+			private$fun_holder <- fun
+			private$fun_holder
 		},
 
 		cli_name = function(value) {
@@ -68,6 +72,30 @@ wtfn_function <- R6Class(
 				# so if a function does not have type `closure`, it must be from `base`.
 				return("base")
 			}
+
+			env <- environment(self$fun)
+
+			if (rlang::is_namespace(env)) {
+				private$pkg_holder <- environmentName(env)
+				return(private$pkg_holder)
+			}
+
+			# Find packages that have a help file for the function
+			help_packages <- utils::help.search(
+				paste0("^\\Q", self$bare_name, "\\E$"),
+				fields = "alias",
+				ignore.case = FALSE
+			)$matches$Package
+
+			if (length(help_packages) > 1) {
+				cli::cli_abort(c(
+					"x" = "{self$cli_name} could not be found in any installed packages.",
+					"!" = "Do you need to install the package containing it?"
+				))
+			}
+
+			# TODO: Prioritize which help package to return
+			private$pkg_holder <- help_packages[1]
 			private$pkg_holder
 		},
 
