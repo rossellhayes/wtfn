@@ -7,5 +7,5 @@ dependency_type <- function(pkg) {
 	type_order <- c("Depends", "Imports", "Suggests", "Enhances", "LinkingTo")
 	deps <- deps[order(match(deps$type, type_order)), ]
 
-	deps[deps$package == pkg, ]$type[[1]]
+	deps[deps$package == pkg, ]$type[1]
 }

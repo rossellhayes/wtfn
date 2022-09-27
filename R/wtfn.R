@@ -36,7 +36,7 @@ wtfn <- function(fun, fun_text = NULL) {
 
 	dependency_type <- dependency_type(pkg)
 
-	if (length(dependency_type) == 0) {
+	if (is.na(dependency_type)) {
 		cli::cli_inform(c(
 			"i" = "{.strong {.pkg {pkg}} is not a declared dependency.}",
 			"x" = paste(
