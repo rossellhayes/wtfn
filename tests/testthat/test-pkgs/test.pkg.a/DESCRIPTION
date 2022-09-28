@@ -2,4 +2,6 @@ Package: test.pkg.a
 Suggests: 
     cli
 Imports: 
-    cli
+    cli,
+    dplyr,
+    stats

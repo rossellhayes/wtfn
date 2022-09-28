@@ -1,5 +1,6 @@
 wtfn <- function(fun) {
-	fun <- wtfn_function$new({{fun}})
+	dev_context <- wtfn_dev_context$new()
+	fun <- wtfn_function$new({{fun}}, dev_context)
 
 	cli::cli_div(theme = cli_theme_caniuse())
 	cli::cat_line()

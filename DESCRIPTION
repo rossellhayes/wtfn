@@ -15,6 +15,7 @@ Imports:
     purrr,
     R6,
     rlang,
+    tibble,
     utils
 Suggests: 
     rstudioapi,

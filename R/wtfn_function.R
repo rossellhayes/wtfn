@@ -2,16 +2,18 @@ wtfn_function <- R6Class(
 	"wtfn_function",
 	public = list(
 		name = NULL,
+		dev_context = NULL,
 
-		initialize = function(fun = NULL, name = NULL) {
-			self$name <- name %||%
-				unquote(rlang::expr_text(rlang::quo_get_expr(rlang::enquo(fun))))
+		initialize = function(fun = NULL, dev_context = NULL) {
+			self$name <- unquote(
+				rlang::expr_text(rlang::quo_get_expr(rlang::enquo(fun)))
+			)
 
 			if (is.function(fun)) {
-				private$fun_holder <- fun
-			} else {
-				self$name <- name %||% as.character(fun)
+				self$fun <- fun
 			}
+
+			self$dev_context <- dev_context
 
 			self
 		}
@@ -63,21 +65,36 @@ wtfn_function <- R6Class(
 				return(private$pkg_holder)
 			}
 
-			if (!self$is_closure) {
-				# Normal functions (e.g. `mean`) and infix functions (e.g. `%in%`)
-				# have class `function` and type `closure`.
-				# Special operators (e.g. `+` or `<-`) also have class `function`,
-				# but type `builtin` or `special`.
-				# Special operators can't be exported from packages,
-				# so if a function does not have type `closure`, it must be from `base`.
-				return("base")
+			# If `fun` is imported using `importFrom()`, use that package
+			if (
+				!is.null(self$dev_context) &&
+				self$bare_name %in% self$dev_context$imports$fun
+			) {
+				private$pkg_holder <- self$dev_context$imports[[
+					match(self$bare_name, self$dev_context$imports$fun),
+					"pkg"
+				]]
+				return(private$pkg_holder)
 			}
 
-			env <- environment(self$fun)
+			if (!is.null(self$fun)) {
+				if (!self$is_closure) {
+					# Normal functions (e.g. `mean`) and infix functions (e.g. `%in%`)
+					# have class `function` and type `closure`.
+					# Special operators (e.g. `+` or `<-`) also have class `function`,
+					# but type `builtin` or `special`.
+					# Special operators can't be exported from packages,
+					# so if a function is not a `closure`, it must be from `base`.
+					return("base")
+				}
 
-			if (rlang::is_namespace(env)) {
-				private$pkg_holder <- environmentName(env)
-				return(private$pkg_holder)
+				# If `fun` can be evaluated with the current search path, use that package
+				env <- environment(self$fun)
+
+				if (rlang::is_namespace(env)) {
+					private$pkg_holder <- environmentName(env)
+					return(private$pkg_holder)
+				}
 			}
 
 			# Find packages that have a help file for the function
@@ -87,14 +104,19 @@ wtfn_function <- R6Class(
 				ignore.case = FALSE
 			)$matches$Package
 
-			if (length(help_packages) > 1) {
+			if (length(help_packages) < 1) {
 				cli::cli_abort(c(
 					"x" = "{self$cli_name} could not be found in any installed packages.",
 					"!" = "Do you need to install the package containing it?"
 				))
 			}
 
-			# TODO: Prioritize which help package to return
+			# Reorder search results so packages that are also in `$dev_context$deps`
+			# appear first
+			help_packages <- help_packages[
+				order(match(help_packages, self$dev_context$deps$package))
+			]
+
 			private$pkg_holder <- help_packages[1]
 			private$pkg_holder
 		},
