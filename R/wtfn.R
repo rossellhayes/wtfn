@@ -3,7 +3,6 @@ wtfn <- function(fun) {
 	fun <- wtfn_function$new({{fun}}, dev_context)
 
 	cli::cli_div(theme = cli_theme_caniuse())
-	cli::cat_line()
 	cli::cli_inform(c("i" = "{.strong {fun$cli_name} is from {fun$cli_pkg}.}"))
 
 	if (identical(fun$pkg, desc::desc_get_field("Package"))) {
