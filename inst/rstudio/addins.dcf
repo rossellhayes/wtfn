@@ -1,4 +1,4 @@
-Name: Can I use this function?
+Name: Where's this function?
 Description: Checks if the currently selected function can be used in your package, or if you need to add a dependency.
-Binding: can_i_use_addin
 Interactive: false
+Binding: wtfn_addin

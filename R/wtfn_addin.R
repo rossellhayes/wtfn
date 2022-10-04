@@ -3,7 +3,7 @@ wtfn_addin <- function() {
 }
 
 function_under_cursor <- function() {
-	rlang::check_installed("rstudioapi", "to use the caniusethis addin.")
+	rlang::check_installed("rstudioapi", "to use the wtfn addin.")
 
 	code <- rstudioapi::selectionGet()$value
 
