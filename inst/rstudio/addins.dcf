@@ -1,4 +1,4 @@
 Name: Where's this function?
 Description: Checks if the currently selected function can be used in your package, or if you need to add a dependency.
-Interactive: false
 Binding: wtfn_addin
+Interactive: true
