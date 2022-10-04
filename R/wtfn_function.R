@@ -9,6 +9,10 @@ wtfn_function <- R6Class(
 				rlang::expr_text(rlang::quo_get_expr(rlang::enquo(fun)))
 			)
 
+			if (is.character(fun)) {
+				self$name <- fun
+			}
+
 			if (is.function(fun)) {
 				self$fun <- fun
 			}
