@@ -49,7 +49,7 @@ wtfn_function <- R6Class(
 				return(private$cli_name_holder)
 			}
 
-			cli::cli_div(theme = cli_theme_caniuse())
+			cli::cli_div(theme = cli_theme_wtfn())
 
 			if (self$is_infix) {
 				private$cli_name_holder <- cli::format_inline("{.var {self$name}}")
@@ -134,7 +134,7 @@ wtfn_function <- R6Class(
 				return(private$cli_pkg_holder)
 			}
 
-			cli::cli_div(theme = cli_theme_caniuse())
+			cli::cli_div(theme = cli_theme_wtfn())
 
 			private$cli_pkg_holder <- cli::format_inline("{.pkg {self$pkg}}")
 			private$cli_pkg_holder
@@ -216,7 +216,7 @@ wtfn_function <- R6Class(
 				return(private$cli_namespaced_name_holder)
 			}
 
-			cli::cli_div(theme = cli_theme_caniuse())
+			cli::cli_div(theme = cli_theme_wtfn())
 
 			if (self$is_infix) {
 				private$cli_namespaced_name_holder <-

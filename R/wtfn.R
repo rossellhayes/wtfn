@@ -2,7 +2,7 @@ wtfn <- function(fun) {
 	dev_context <- wtfn_dev_context$new()
 	fun <- wtfn_function$new({{fun}}, dev_context)
 
-	cli::cli_div(theme = cli_theme_caniuse())
+	cli::cli_div(theme = cli_theme_wtfn())
 	cli::cli_inform(c("i" = "{.strong {fun$cli_name} is from {fun$cli_pkg}.}"))
 
 	if (identical(fun$pkg, desc::desc_get_field("Package"))) {
@@ -78,7 +78,7 @@ unquote <- function(x) {
 	gsub("[\"']", "", x, perl = TRUE)
 }
 
-cli_theme_caniuse <- function() {
+cli_theme_wtfn <- function() {
 	list(
 		span.fun = list(color = "blue"),
 		span.run = list(transform = function(x) {

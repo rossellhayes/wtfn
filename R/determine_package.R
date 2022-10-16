@@ -28,7 +28,7 @@ determine_package.function <- function(fun) {
 
 #' @export
 determine_package.character <- function(fun) {
-	cli::cli_div(theme = cli_theme_caniuse())
+	cli::cli_div(theme = cli_theme_wtfn())
 
 	fun_text <- fun
 
