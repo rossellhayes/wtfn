@@ -20,7 +20,7 @@ wtfn <- function(fun) {
 
 	if (nrow(backport) > 0) {
 		backports_message <- c(
-			"i" = paste(
+			"!" = paste(
 				"The current implementation of {fun$cli_name}",
 				"was introduced in R {.val {backport$version}}."
 			),
