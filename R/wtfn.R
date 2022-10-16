@@ -14,10 +14,30 @@ wtfn <- function(fun) {
 		return(invisible(TRUE))
 	}
 
+	backport <- backports[
+		backports$fun == fun$bare_name & backports$package == fun$pkg,
+	]
+
+	if (nrow(backport) > 0) {
+		backports_message <- c(
+			"i" = paste(
+				"The current implementation of {fun$cli_name}",
+				"was introduced in R {.val {backport$version}}."
+			),
+			"*" = paste(
+				"For compatibility with R < {.val {backport$version}},",
+				"consider using {.help [{.pkg backports}](backports::import)}."
+			)
+		)
+	} else {
+		backports_message <- NULL
+	}
+
 	if (identical(fun$pkg, "base")) {
 		cli::cli_inform(c(
 			"i" = "{.strong {.pkg base} functions can be used in all R packages.}",
-			"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
+			"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!",
+			backports_message
 		))
 
 		return(invisible(TRUE))
@@ -32,7 +52,8 @@ wtfn <- function(fun) {
 				"You can't use {fun$cli_name},",
 				"because your package doesn't depend on {fun$cli_pkg}."
 			),
-			"*" = 'Use {.run usethis::use_package("{fun$pkg}")} to add it as a dependency.'
+			"*" = 'Use {.run usethis::use_package("{fun$pkg}")} to add it as a dependency.',
+			backports_message
 		))
 
 		return(invisible(FALSE))
@@ -46,7 +67,8 @@ wtfn <- function(fun) {
 		if (is_imported(fun$bare_name, from = fun$pkg)) {
 			cli::cli_inform(c(
 				"i" = "{.strong {fun$cli_name} is imported from {fun$cli_pkg} using {.var importFrom}.}",
-				"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
+				"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!",
+				backports_message
 			))
 
 			return(invisible(TRUE))
@@ -54,7 +76,8 @@ wtfn <- function(fun) {
 
 		cli::cli_inform(c(
 			"v" = "You can use {fun$cli_name}.",
-			"*" = "In your package code, refer to it with {fun$cli_namespaced_name}."
+			"*" = "In your package code, refer to it with {fun$cli_namespaced_name}.",
+			backports_message
 		))
 
 		return(invisible(TRUE))
