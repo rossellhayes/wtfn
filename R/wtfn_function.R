@@ -51,10 +51,10 @@ wtfn_function <- R6Class(
 
 			cli::cli_div(theme = cli_theme_wtfn())
 
-			if (self$is_infix) {
-				private$cli_name_holder <- cli::format_inline("{.var {self$name}}")
-			} else {
+			if (self$is_function && !self$is_infix) {
 				private$cli_name_holder <- cli::format_inline("{.fun {self$name}}")
+			} else {
+				private$cli_name_holder <- cli::format_inline("{.var {self$name}}")
 			}
 
 			private$cli_name_holder
@@ -82,7 +82,7 @@ wtfn_function <- R6Class(
 			}
 
 			if (!is.null(self$fun)) {
-				if (!self$is_closure) {
+				if (self$is_function && !self$is_closure) {
 					# Normal functions (e.g. `mean`) and infix functions (e.g. `%in%`)
 					# have class `function` and type `closure`.
 					# Special operators (e.g. `+` or `<-`) also have class `function`,
@@ -229,6 +229,15 @@ wtfn_function <- R6Class(
 			private$cli_namespaced_name_holder
 		},
 
+		is_function = function() {
+			if (!is.null(private$is_function_holder)) {
+				return(private$is_function_holder)
+			}
+
+			private$is_function_holder <- is.function(self$fun)
+			private$is_function_holder
+		},
+
 		is_infix = function() {
 			if (!is.null(private$is_infix_holder)) {
 				return(private$is_infix_holder)
@@ -260,6 +269,7 @@ wtfn_function <- R6Class(
 		syntactic_name_holder = NULL,
 		namespaced_name_holder = NULL,
 		cli_namespaced_name_holder = NULL,
+		is_function_holder = NULL,
 		is_infix_holder = NULL,
 		is_closure_holder = NULL
 	)
