@@ -117,12 +117,15 @@ wtfn_function <- R6Class(
 
 			# Reorder search results
 			# - First, prefer packages that the current package depends on
+			#   - Excluding backports if backports is a dependency
 			# - Then, prefer base packages (e.g. `base`, `tools`, `utils`)
+			# - Then, backports if backports is a dependency
 			# - Finally, all non-dependency and non-base packages
 			help_packages <- help_packages[
 				order(
-					match(help_packages, self$dev_context$deps$package),
-					match(help_packages, row.names(installed.packages(priority = "base")))
+					match(help_packages, setdiff(self$dev_context$deps$package, "backports")),
+					match(help_packages, row.names(installed.packages(priority = "base"))),
+					match(help_packages, intersect(self$dev_context$deps$package, "backports"))
 				)
 			]
 
