@@ -14,24 +14,7 @@ wtfn <- function(fun) {
 		return(invisible(TRUE))
 	}
 
-	backport <- backports[
-		backports$fun == fun$bare_name & backports$package == fun$pkg,
-	]
-
-	if (nrow(backport) > 0) {
-		backports_message <- c(
-			"!" = paste(
-				"The current implementation of {fun$cli_name}",
-				"was introduced in R {.val {backport$version}}."
-			),
-			"*" = paste(
-				"For compatibility with R < {.val {backport$version}},",
-				"consider using {.help [{.pkg backports}](backports::import)}."
-			)
-		)
-	} else {
-		backports_message <- NULL
-	}
+	backports_message <- generate_backports_message(fun)
 
 	if (identical(fun$pkg, "base")) {
 		cli::cli_inform(c(
