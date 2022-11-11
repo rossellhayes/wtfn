@@ -6,12 +6,9 @@ function_under_cursor <- function() {
 	rlang::check_installed("rstudioapi", "to use the wtfn addin.")
 
 	code <- rstudioapi::selectionGet()$value
+	if (length(code) > 0 && any(nzchar(code))) return(code)
 
 	# If nothing is selected, get code from current active RStudio context
-	if (length(code) > 0 && any(code != "")) {
-		return(code)
-	}
-
 	context <- rstudioapi::getActiveDocumentContext()
 	cursor <- context$selection[[1]]$range$start
 
@@ -46,6 +43,10 @@ function_under_cursor <- function() {
 	# Instead, we return all symbols that share `found_symbol`'s parent expression.
 	found_symbol_parent <- found_symbol[["parent"]]
 	found_expr <- parse_data[parse_data$parent == found_symbol_parent, ]
+
+	# Don't include `expr`s that share a parent expression
+	# (This would include things like arguments to infixes)
+	found_expr <- found_expr[found_expr$token != "expr", ]
 
 	# Using the positions of the found expressions in the parse data,
 	# extract the function under the cursor from `code`.
