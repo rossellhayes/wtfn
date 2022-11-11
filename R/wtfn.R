@@ -1,4 +1,5 @@
 wtfn <- function(fun) {
+	description <- desc::description$new()$normalize()
 	dev_context <- wtfn_dev_context$new()
 	fun <- wtfn_function$new({{fun}}, dev_context)
 
@@ -14,7 +15,7 @@ wtfn <- function(fun) {
 		return(invisible(TRUE))
 	}
 
-	backports_message <- generate_backports_message(fun)
+	backports_message <- generate_backports_message(fun, description)
 
 	if (identical(fun$pkg, "base")) {
 		cli::cli_inform(c(

@@ -1,12 +1,13 @@
-generate_backports_message <- function(fun) {
-	minimum_r_version <- get_package_minimum_r_version()
-	backport <- backports[
+generate_backports_message <- function(fun, description) {
+	minimum_r_version <- get_package_minimum_r_version(description)
+
+	is_backported <- any(
 		backports$fun == fun$bare_name &
 			backports$package == fun$pkg &
-			backports$version > minimum_r_version,
-	]
+			backports$version > minimum_r_version
+	)
 
-	if (nrow(backport) > 0) {
+	if (is_backported) {
 		c(
 			"!" = paste(
 				"The current implementation of {fun$cli_name}",
@@ -18,4 +19,14 @@ generate_backports_message <- function(fun) {
 			)
 		)
 	}
+}
+
+get_package_minimum_r_version <- function(description) {
+	deps <- description$get_deps()
+	r_version <- deps[deps$package == "R", "version"]
+	if (length(r_version) == 0) return(as.numeric_version(0))
+	r_version <- sub("^.*?(\\d+([.-]\\d+){0,2}).*?$", "\\1", r_version)
+	r_version <- as.numeric_version(r_version)
+	# If there is somehow more than one specified R version, take the largest
+	max(r_version)
 }
