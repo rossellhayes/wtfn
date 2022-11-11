@@ -1,7 +1,7 @@
 wtfn <- function(fun) {
 	description <- desc::description$new()$normalize()
-	dev_context <- wtfn_dev_context$new()
-	fun <- wtfn_function$new({{fun}}, dev_context)
+	namespace_imports <- get_namespace_imports()
+	fun <- wtfn_function$new({{fun}}, description, namespace_imports)
 
 	cli::cli_div(theme = cli_theme_wtfn())
 	cli::cli_inform(c("i" = "{.strong {fun$cli_name} is from {fun$cli_pkg}.}"))

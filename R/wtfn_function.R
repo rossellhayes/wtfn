@@ -2,9 +2,14 @@ wtfn_function <- R6Class(
 	"wtfn_function",
 	public = list(
 		name = NULL,
-		dev_context = NULL,
+		description = NULL,
+		namespace_imports = NULL,
 
-		initialize = function(fun = NULL, dev_context = NULL) {
+		initialize = function(
+		  fun = NULL,
+		  description = desc::description$new(),
+		  namespace_imports = get_namespace_imports()
+		) {
 			self$name <- unquote(
 				rlang::expr_text(rlang::quo_get_expr(rlang::enquo(fun)))
 			)
@@ -17,7 +22,8 @@ wtfn_function <- R6Class(
 				self$fun <- fun
 			}
 
-			self$dev_context <- dev_context
+			self$description <- description
+			self$namespace_imports <- namespace_imports
 
 			self
 		}
@@ -71,11 +77,11 @@ wtfn_function <- R6Class(
 
 			# If `fun` is imported using `importFrom()`, use that package
 			if (
-				!is.null(self$dev_context) &&
-				self$bare_name %in% self$dev_context$imports$fun
+				nrow(self$namespace_imports) > 0 &&
+				self$bare_name %in% self$namespace_imports$fun
 			) {
-				private$pkg_holder <- self$dev_context$imports[[
-					match(self$bare_name, self$dev_context$imports$fun),
+				private$pkg_holder <- self$namespace_imports[[
+					match(self$bare_name, self$namespace_imports$fun),
 					"pkg"
 				]]
 				return(private$pkg_holder)
@@ -123,9 +129,9 @@ wtfn_function <- R6Class(
 			# - Finally, all non-dependency and non-base packages
 			help_packages <- help_packages[
 				order(
-					match(help_packages, setdiff(self$dev_context$deps$package, "backports")),
+					match(help_packages, setdiff(self$description$get_deps()$package, "backports")),
 					match(help_packages, row.names(installed.packages(priority = "base"))),
-					match(help_packages, intersect(self$dev_context$deps$package, "backports"))
+					match(help_packages, intersect(self$description$get_deps()$package, "backports"))
 				)
 			]
 
