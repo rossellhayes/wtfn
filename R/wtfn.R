@@ -60,7 +60,20 @@ wtfn <- function(fun) {
 
 		cli::cli_inform(c(
 			"v" = "You can use {fun$cli_name}.",
-			"*" = "In your package code, refer to it with {fun$cli_namespaced_name}.",
+			if (fun$is_infix) {
+				c(
+					"*" = paste(
+						"For ease of use, consider importing it into your package with",
+						'{.run usethis::import_from("{fun$pkg}", "{fun$bare_name}")}.'
+					),
+					"*" = "Then refer to it with {fun$cli_name}."
+				)
+			} else {
+				c(
+					"*" =
+						"In your package code, refer to it with {fun$cli_namespaced_name}."
+				)
+			},
 			backports_message
 		))
 
@@ -76,7 +89,7 @@ wtfn <- function(fun) {
 			'or {.code rlang::check_installed("{fun$pkg}")}',
 			'to test if {.pkg {fun$pkg}} is installed.'
 		),
-		"*" = "Then refer to it with {fun$cli_namespaced_name}."
+		"*" =
 	))
 
 	return(invisible(TRUE))
