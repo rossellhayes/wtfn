@@ -179,7 +179,7 @@ wtfn_function <- R6Class(
 
 			private$syntactic_name_holder <- paste0(namespace, name)
 
-			if (length(namespace) > 0) {
+			if (nzchar(namespace)) {
 				self$namespaced_name <- private$syntactic_name_holder
 			}
 
