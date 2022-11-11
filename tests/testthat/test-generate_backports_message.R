@@ -6,7 +6,9 @@ test_that("backports messages", {
 	))
 	withr::local_dir("test.pkg.b")
 
-	writeLines("Package: test.pkg.b", "DESCRIPTION")
+	desc <- desc::description$new("!new")
+	desc$set(Package = "test.pkg.b")
+	desc$write(file = "DESCRIPTION")
 	expect_true(
 		!is.null(
 			generate_backports_message(
@@ -15,7 +17,8 @@ test_that("backports messages", {
 		)
 	)
 
-	writeLines(c("Depends:", "    R (>= 2.10)"), "DESCRIPTION")
+	desc$set(Depends = "R (>= 2.10)")
+	desc$write(file = "DESCRIPTION")
 	expect_true(
 		!is.null(
 			generate_backports_message(
@@ -24,11 +27,8 @@ test_that("backports messages", {
 		)
 	)
 
-	file.remove("DESCRIPTION")
-	writeLines(
-		c("Package: test.pkg.b", "Depends:", "    R (>= 4.0.0)"),
-		"DESCRIPTION"
-	)
+	desc$set(Depends = "R (>= 4.0)")
+	desc$write(file = "DESCRIPTION")
 	expect_null(
 		generate_backports_message(
 			wtfn_function$new("stopifnot", wtfn_dev_context$new())
