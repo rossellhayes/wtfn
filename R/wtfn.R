@@ -4,11 +4,11 @@ wtfn <- function(fun) {
 	fun <- wtfn_function$new({{fun}}, description, namespace_imports)
 
 	cli::cli_div(theme = cli_theme_wtfn())
-	cli::cli_inform(c("i" = "{.strong {fun$cli_name} is from {fun$cli_pkg}.}"))
+	cli::cli_inform(c("i" = "{.strong {fun$cli_name} is from {.pkg {fun$pkg}}.}"))
 
 	if (identical(fun$pkg, desc::desc_get_field("Package"))) {
 		cli::cli_inform(c(
-			"i" = "{.strong {fun$cli_pkg} is the current package.}",
+			"i" = "{.strong {.pkg {fun$pkg}} is the current package.}",
 			"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
 		))
 
@@ -31,10 +31,10 @@ wtfn <- function(fun) {
 
 	if (is.na(dependency_type)) {
 		cli::cli_inform(c(
-			"i" = "{.strong {fun$cli_pkg} is not a declared dependency.}",
+			"i" = "{.strong {.pkg {fun$pkg}} is not a declared dependency.}",
 			"x" = paste(
 				"You can't use {fun$cli_name},",
-				"because your package doesn't depend on {fun$cli_pkg}."
+				"because your package doesn't depend on {.pkg {fun$pkg}}."
 			),
 			"*" = 'Use {.run usethis::use_package("{fun$pkg}")} to add it as a dependency.',
 			backports_message
@@ -43,14 +43,14 @@ wtfn <- function(fun) {
 		return(invisible(FALSE))
 	}
 
-	cli::cli_inform(
-		c("i" = "{.strong {fun$cli_pkg} is declared in {.val {dependency_type}}.}")
-	)
+	cli::cli_inform(c(
+		"i" = "{.strong {.pkg {fun$pkg}} is declared in {.val {dependency_type}}.}"
+	))
 
 	if (dependency_type %in% c("Imports", "Depends")) {
 		if (is_imported(fun$bare_name, from = fun$pkg)) {
 			cli::cli_inform(c(
-				"i" = "{.strong {fun$cli_name} is imported from {fun$cli_pkg} using {.var importFrom}.}",
+				"i" = "{.strong {fun$cli_name} is imported from {.pkg {fun$pkg}} using {.var importFrom}.}",
 				"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!",
 				backports_message
 			))
@@ -73,7 +73,8 @@ wtfn <- function(fun) {
 		"!" = "You can use {fun$cli_name} {.emph carefully}.",
 		"*" = paste(
 			'In your package code, use {.code rlang::is_installed("{fun$pkg}")}',
-			'or {.code rlang::check_installed("{fun$pkg}")} to test if {fun$cli_pkg} is installed.'
+			'or {.code rlang::check_installed("{fun$pkg}")}',
+			'to test if {.pkg {fun$pkg}} is installed.'
 		),
 		"*" = "Then refer to it with {fun$cli_namespaced_name}."
 	))

@@ -139,21 +139,6 @@ wtfn_function <- R6Class(
 			private$pkg_holder
 		},
 
-		cli_pkg = function(value) {
-			if (!missing(value)) {
-				private$cli_pkg_holder <- value
-			}
-
-			if (!is.null(private$cli_pkg_holder)) {
-				return(private$cli_pkg_holder)
-			}
-
-			cli::cli_div(theme = cli_theme_wtfn())
-
-			private$cli_pkg_holder <- cli::format_inline("{.pkg {self$pkg}}")
-			private$cli_pkg_holder
-		},
-
 		bare_name = function(value) {
 			if (!missing(value)) {
 				private$bare_name_holder <- value
@@ -278,7 +263,6 @@ wtfn_function <- R6Class(
 		fun_holder = NULL,
 		cli_name_holder = NULL,
 		pkg_holder = NULL,
-		cli_pkg_holder = NULL,
 		bare_name_holder = NULL,
 		syntactic_name_holder = NULL,
 		namespaced_name_holder = NULL,
