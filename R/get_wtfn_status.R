@@ -64,7 +64,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 					"For ease of use, consider importing it into your package with",
 					'{.run usethis::import_from("{fun$pkg}", "{fun$bare_name}")}.'
 				),
-				"*" = "Then refer to it with {fun$cli_name}."
+				"*" = "Then refer to it with {fun$cli_bare_name}."
 			)
 
 			return(list(message = message, can_use = TRUE))

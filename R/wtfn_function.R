@@ -198,6 +198,28 @@ wtfn_function <- R6Class(
 			private$bare_name_holder
 		},
 
+		cli_bare_name = function(value) {
+			if (!missing(value)) private$cli_bare_name_holder <- value
+			if (!is.null(private$cli_bare_name_holder)) {
+				return(private$cli_bare_name_holder)
+			}
+
+			cli::cli_div(theme = cli_theme_wtfn())
+
+			private$cli_bare_name_holder <-
+				if (self$is_function && !self$is_infix) {
+					cli::format_inline(
+						"{.blue `{.help [{self$bare_name}]({self$help_topic})}()`}"
+					)
+				} else {
+					cli::format_inline(
+						"{.blue `{.topic [{self$bare_name}]({self$help_topic})}`}"
+					)
+				}
+
+			private$cli_bare_name_holder
+		},
+
 		syntactic_name = function(value) {
 			if (!missing(value)) {
 				private$syntactic_name_holder <- value
@@ -313,6 +335,7 @@ wtfn_function <- R6Class(
 		help_page_holder = NULL,
 		help_topic_holder = NULL,
 		bare_name_holder = NULL,
+		cli_bare_name_holder = NULL,
 		syntactic_name_holder = NULL,
 		namespaced_name_holder = NULL,
 		cli_namespaced_name_holder = NULL,
