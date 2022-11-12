@@ -1,9 +1,10 @@
 wtfn_function <- R6Class(
 	"wtfn_function",
 	public = list(
-		name = NULL,
 		description = NULL,
 		namespace_imports = NULL,
+
+		name = NULL,
 
 		initialize = function(
 		  fun = NULL,
@@ -31,13 +32,8 @@ wtfn_function <- R6Class(
 
 	active = list(
 		fun = function(value) {
-			if (!missing(value)) {
-				private$fun_holder <- value
-			}
-
-			if (!is.null(private$fun_holder)) {
-				return(private$fun_holder)
-			}
+			if (!missing(value)) private$fun_holder <- value
+			if (!is.null(private$fun_holder)) return(private$fun_holder)
 
 			fun <- self$syntactic_name
 			fun <- purrr::possibly(eval, otherwise = NULL)(rlang::parse_expr(fun))
@@ -47,33 +43,25 @@ wtfn_function <- R6Class(
 		},
 
 		cli_name = function(value) {
-			if (!missing(value)) {
-				private$cli_name_holder <- value
-			}
-
-			if (!is.null(private$cli_name_holder)) {
-				return(private$cli_name_holder)
-			}
+			if (!missing(value)) private$cli_name_holder <- value
+			if (!is.null(private$cli_name_holder)) return(private$cli_name_holder)
 
 			cli::cli_div(theme = cli_theme_wtfn())
 
-			if (self$is_function && !self$is_infix) {
-				private$cli_name_holder <- cli::format_inline("{.fun {self$name}}")
+			private$cli_name_holder <- if (self$is_function && !self$is_infix) {
+				cli::format_inline("{.var {.help [{self$name}]({self$help_topic})}()}")
 			} else {
-				private$cli_name_holder <- cli::format_inline("{.var {self$name}}")
+				# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
+				# Adding empty braces resolves this.
+				cli::format_inline("{.var {.topic [{self$name}]({self$help_topic})}{}}")
 			}
 
 			private$cli_name_holder
 		},
 
 		pkg = function(value) {
-			if (!missing(value)) {
-				private$pkg_holder <- value
-			}
-
-			if (!is.null(private$pkg_holder)) {
-				return(private$pkg_holder)
-			}
+			if (!missing(value)) private$pkg_holder <- value
+			if (!is.null(private$pkg_holder)) return(private$pkg_holder)
 
 			# If `fun` is imported using `importFrom()`, use that package
 			if (
@@ -107,16 +95,55 @@ wtfn_function <- R6Class(
 				}
 			}
 
-			# Find packages that have a help file for the function
-			help_packages <- utils::help.search(
-				paste0("^\\Q", self$bare_name, "\\E$"),
-				fields = "alias",
-				ignore.case = FALSE
-			)$matches$Package
+			private$pkg_holder <- self$help_page$Package
+			private$pkg_holder
+		},
 
-			if (length(help_packages) < 1) {
+		cli_pkg = function(value) {
+			if (!missing(value)) private$cli_pkg_holder <- value
+			if (!is.null(private$cli_pkg_holder)) return(private$cli_pkg_holder)
+
+			cli::cli_div(theme = cli_theme_wtfn())
+
+			pkg_help_pages <- utils::help.search(
+				paste0("^\\Q", self$pkg, "-package", "\\E$"),
+				fields = "alias", ignore.case = FALSE, package = self$pkg
+			)$matches$Topic
+
+			if (length(pkg_help_pages) < 1) {
+				private$cli_pkg_holder <- cli::format_inline("{.pkg {self$pkg}}")
+				return(private$cli_pkg_holder)
+			}
+
+			pkg_help_page <- paste0(self$pkg, "::", pkg_help_pages[[1]])
+
+			private$cli_pkg_holder <-
+				cli::format_inline("{.help [{.pkg {self$pkg}}]({pkg_help_page})}")
+
+			private$cli_pkg_holder
+		},
+
+		help_page = function(value) {
+			if (!missing(value)) private$help_page_holder <- value
+			if (!is.null(private$help_page_holder)) return(private$help_page_holder)
+
+			help_pages <- utils::help.search(
+				paste0("^\\Q", self$bare_name, "\\E$"),
+				fields = "alias", ignore.case = FALSE, types = "help"
+			)$matches
+
+			if (nrow(help_pages) < 1) {
+				help_pages <- utils::help.search(
+					paste0("^\\Q", self$bare_name, "\\E$"),
+					fields = "alias", ignore.case = FALSE, types = "help", rebuild = TRUE
+				)$matches
+			}
+
+			if (nrow(help_pages) < 1) {
+				cli::cli_div(theme = cli_theme_wtfn())
+
 				cli::cli_abort(c(
-					"x" = "{self$cli_name} could not be found in any installed packages.",
+					"x" = "{.var {self$name}} could not be found in any installed packages.",
 					"!" = "Do you need to install the package containing it?"
 				))
 			}
@@ -127,26 +154,33 @@ wtfn_function <- R6Class(
 			# - Then, prefer base packages (e.g. `base`, `tools`, `utils`)
 			# - Then, backports if backports is a dependency
 			# - Finally, all non-dependency and non-base packages
-			help_packages <- help_packages[
+			help_pages <- help_pages[
 				order(
-					match(help_packages, setdiff(self$description$get_deps()$package, "backports")),
-					match(help_packages, row.names(installed.packages(priority = "base"))),
-					match(help_packages, intersect(self$description$get_deps()$package, "backports"))
-				)
+					match(help_pages$Package, setdiff(self$description$get_deps()$package, "backports")),
+					match(help_pages$Package, row.names(installed.packages(priority = "base"))),
+					match(help_pages$Package, intersect(self$description$get_deps()$package, "backports"))
+				),
 			]
 
-			private$pkg_holder <- help_packages[1]
-			private$pkg_holder
+			if (!is.null(private$pkg_holder)) {
+				help_pages <- help_pages[help_pages$Package == private$pkg_holder, ]
+			}
+
+			private$help_page_holder <- help_pages[1, ]
+			private$help_page_holder
+		},
+
+		help_topic = function(value) {
+			if (!missing(value)) private$help_topic_holder <- value
+			if (!is.null(private$help_topic_holder)) return(private$help_topic_holder)
+
+			private$help_topic_holder <- paste0(self$pkg, "::", self$help_page$Topic)
+			private$help_topic_holder
 		},
 
 		bare_name = function(value) {
-			if (!missing(value)) {
-				private$bare_name_holder <- value
-			}
-
-			if (!is.null(private$bare_name_holder)) {
-				return(private$bare_name_holder)
-			}
+			if (!missing(value)) private$bare_name_holder <- value
+			if (!is.null(private$bare_name_holder)) return(private$bare_name_holder)
 
 			name <- self$name
 			name <- sub("[[:alnum:]\\.]+:::?", "", name, perl = TRUE)
@@ -155,11 +189,32 @@ wtfn_function <- R6Class(
 			private$bare_name_holder
 		},
 
-		syntactic_name = function(value) {
-			if (!missing(value)) {
-				private$syntactic_name_holder <- value
+		cli_bare_name = function(value) {
+			if (!missing(value)) private$cli_bare_name_holder <- value
+			if (!is.null(private$cli_bare_name_holder)) {
+				return(private$cli_bare_name_holder)
 			}
 
+			cli::cli_div(theme = cli_theme_wtfn())
+
+			private$cli_bare_name_holder <-
+				if (self$is_function && !self$is_infix) {
+					cli::format_inline(
+						"{.var {.help [{self$bare_name}]({self$help_topic})}()}"
+					)
+				} else {
+					# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
+					# Adding empty braces resolves this.
+					cli::format_inline(
+						"{.var {.topic [{self$bare_name}]({self$help_topic})}{}}"
+					)
+				}
+
+			private$cli_bare_name_holder
+		},
+
+		syntactic_name = function(value) {
+			if (!missing(value)) private$syntactic_name_holder <- value
 			if (!is.null(private$syntactic_name_holder)) {
 				return(private$syntactic_name_holder)
 			}
@@ -187,10 +242,7 @@ wtfn_function <- R6Class(
 		},
 
 		namespaced_name = function(value) {
-			if (!missing(value)) {
-				private$namespaced_name_holder <- value
-			}
-
+			if (!missing(value)) private$namespaced_name_holder <- value
 			if (!is.null(private$namespaced_name_holder)) {
 				return(private$namespaced_name_holder)
 			}
@@ -207,23 +259,25 @@ wtfn_function <- R6Class(
 		},
 
 		cli_namespaced_name = function(value) {
-			if (!missing(value)) {
-				private$cli_namespaced_name_holder <- value
-			}
-
+			if (!missing(value)) private$cli_namespaced_name_holder <- value
 			if (!is.null(private$cli_namespaced_name_holder)) {
 				return(private$cli_namespaced_name_holder)
 			}
 
 			cli::cli_div(theme = cli_theme_wtfn())
 
-			if (self$is_infix) {
-				private$cli_namespaced_name_holder <-
-					cli::format_inline("{.var {self$namespaced_name}}")
-			} else {
-				private$cli_namespaced_name_holder <-
-					cli::format_inline("{.fun {self$namespaced_name}}")
-			}
+			private$cli_namespaced_name_holder <-
+				if (self$is_function && !self$is_infix) {
+					cli::format_inline(
+						"{.var {.help [{self$namespaced_name}]({self$help_topic})}()}"
+					)
+				} else {
+					# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
+					# Adding empty braces resolves this.
+					cli::format_inline(
+						"{.var {.topic [{self$namespaced_name}]({self$help_topic})}{}}"
+					)
+				}
 
 			private$cli_namespaced_name_holder
 		},
@@ -238,9 +292,7 @@ wtfn_function <- R6Class(
 		},
 
 		is_infix = function() {
-			if (!is.null(private$is_infix_holder)) {
-				return(private$is_infix_holder)
-			}
+			if (!is.null(private$is_infix_holder)) return(private$is_infix_holder)
 
 			private$is_infix_holder <-
 				!self$is_closure ||
@@ -250,9 +302,7 @@ wtfn_function <- R6Class(
 		},
 
 		is_closure = function() {
-			if (!is.null(private$is_closure_holder)) {
-				return(private$is_closure_holder)
-			}
+			if (!is.null(private$is_closure_holder)) return(private$is_closure_holder)
 
 			private$is_closure_holder <- identical(typeof(self$fun), "closure")
 			private$is_closure_holder
@@ -263,7 +313,11 @@ wtfn_function <- R6Class(
 		fun_holder = NULL,
 		cli_name_holder = NULL,
 		pkg_holder = NULL,
+		cli_pkg_holder = NULL,
+		help_page_holder = NULL,
+		help_topic_holder = NULL,
 		bare_name_holder = NULL,
+		cli_bare_name_holder = NULL,
 		syntactic_name_holder = NULL,
 		namespaced_name_holder = NULL,
 		cli_namespaced_name_holder = NULL,

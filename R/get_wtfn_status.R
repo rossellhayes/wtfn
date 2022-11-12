@@ -1,11 +1,13 @@
 get_wtfn_status <- function(fun, description, namespace_imports) {
-	message <- c("i" = "{.strong {fun$cli_name} is from {.pkg {fun$pkg}}.}")
+	cli::cli_div(theme = cli_theme_wtfn())
+
+	message <- c("i" = "{.strong {fun$cli_name} is from {fun$cli_pkg}.}")
 
 	if (identical(fun$pkg, description$get_field("Package"))) {
 		message <- c(
 			message,
-			"i" = "{.strong {.pkg {fun$pkg}} is the current package.}",
-			"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
+			"i" = "{.strong {fun$cli_pkg} is the current package.}",
+			"v" = "You can use {fun$cli_name}."
 		)
 
 		return(list(message = message, can_use = TRUE))
@@ -14,8 +16,8 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	if (identical(fun$pkg, "base")) {
 		message <- c(
 			message,
-			"i" = "{.strong {.pkg base} functions can be used in all R packages.}",
-			"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!",
+			"i" = "{.strong {fun$cli_pkg} functions can be used in all R packages.}",
+			"v" = "You can use {fun$cli_name}."
 		)
 
 		return(list(message = message, can_use = TRUE))
@@ -26,10 +28,10 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	if (is.na(dependency_type)) {
 		message <- c(
 			message,
-			"i" = "{.strong {.pkg {fun$pkg}} is not a declared dependency.}",
+			"i" = "{.strong {fun$cli_pkg} is not a declared dependency.}",
 			"x" = paste(
 				"You can't use {fun$cli_name},",
-				"because your package doesn't depend on {.pkg {fun$pkg}}."
+				"because your package doesn't depend on {fun$cli_pkg}."
 			),
 			"*" = 'Use {.run usethis::use_package("{fun$pkg}")} to add it as a dependency.'
 		)
@@ -40,16 +42,16 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	message <- c(
 		message,
 		"i" = cli::format_inline(
-			"{.strong {.pkg {fun$pkg}} is declared in {.val {dependency_type}}.}"
+			"{.strong {fun$cli_pkg} is declared in {.val {dependency_type}}.}"
 		)
 	)
 
 	if (dependency_type %in% c("Imports", "Depends")) {
-		if (is_imported(fun$bare_name, from = fun$pkg)) {
+		if (is_imported(fun, namespace_imports)) {
 			message <- c(
 				message,
-				"i" = "{.strong {fun$cli_name} is imported from {.pkg {fun$pkg}} using {.var importFrom}.}",
-				"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
+				"i" = "{.strong {fun$cli_name} is imported from {fun$cli_pkg} using {.var importFrom}.}",
+				"v" = "You can use {fun$cli_name}."
 			)
 
 			return(list(message = message, can_use = TRUE))
@@ -64,7 +66,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 					"For ease of use, consider importing it into your package with",
 					'{.run usethis::import_from("{fun$pkg}", "{fun$bare_name}")}.'
 				),
-				"*" = "Then refer to it with {fun$cli_name}."
+				"*" = "Then refer to it with {fun$cli_bare_name}."
 			)
 
 			return(list(message = message, can_use = TRUE))
@@ -86,7 +88,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 		"*" = paste(
 			'In your package code, use {.code rlang::is_installed("{fun$pkg}")}',
 			'or {.code rlang::check_installed("{fun$pkg}")}',
-			'to test if {.pkg {fun$pkg}} is installed.'
+			'to test if {fun$cli_pkg} is installed.'
 		),
 		"*" = "Then refer to it with {fun$cli_namespaced_name}."
 	)
