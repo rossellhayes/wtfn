@@ -105,12 +105,17 @@ wtfn_function <- R6Class(
 
 			cli::cli_div(theme = cli_theme_wtfn())
 
-			pkg_help_page <- utils::help.search(
+			pkg_help_pages <- utils::help.search(
 				paste0("^\\Q", self$pkg, "-package", "\\E$"),
 				fields = "alias", ignore.case = FALSE, package = self$pkg
-			)$matches$Topic[[1]]
+			)$matches$Topic
 
-			pkg_help_page <- paste0(self$pkg, "::", pkg_help_page)
+			if (length(pkg_help_pages) < 1) {
+				private$cli_pkg_holder <- cli::format_inline("{.pkg {self$pkg}}")
+				return(private$cli_pkg_holder)
+			}
+
+			pkg_help_page <- paste0(self$pkg, "::", pkg_help_pages[[1]])
 
 			private$cli_pkg_holder <-
 				cli::format_inline("{.help [{.pkg {self$pkg}}]({pkg_help_page})}")
