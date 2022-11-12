@@ -133,8 +133,10 @@ wtfn_function <- R6Class(
 			)$matches
 
 			if (nrow(help_pages) < 1) {
+				cli::cli_div(theme = cli_theme_wtfn())
+
 				cli::cli_abort(c(
-					"x" = "{self$cli_name} could not be found in any installed packages.",
+					"x" = "{.var {self$name}} could not be found in any installed packages.",
 					"!" = "Do you need to install the package containing it?"
 				))
 			}
