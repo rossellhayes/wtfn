@@ -59,9 +59,9 @@ wtfn_function <- R6Class(
 			cli::cli_div(theme = cli_theme_wtfn())
 
 			private$cli_name_holder <- if (self$is_function && !self$is_infix) {
-				cli::format_inline("{.emph `{.help [{self$name}]({self$help_topic})}()`}")
+				cli::format_inline("{.blue `{.help [{self$name}]({self$help_topic})}()`}")
 			} else {
-				cli::format_inline("{.emph `{.topic [{self$name}]({self$help_topic})}`}")
+				cli::format_inline("{.blue `{.topic [{self$name}]({self$help_topic})}`}")
 			}
 
 			private$cli_name_holder
@@ -263,11 +263,11 @@ wtfn_function <- R6Class(
 			private$cli_namespaced_name_holder <-
 				if (self$is_function && !self$is_infix) {
 					cli::format_inline(
-						"{.emph `{.help [{self$namespaced_name}]({self$help_topic})}()`}"
+						"{.blue `{.help [{self$namespaced_name}]({self$help_topic})}()`}"
 					)
 				} else {
 					cli::format_inline(
-						"{.emph `{.topic [{self$namespaced_name}]({self$help_topic})}`}"
+						"{.blue `{.topic [{self$namespaced_name}]({self$help_topic})}`}"
 					)
 				}
 
