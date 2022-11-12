@@ -108,13 +108,13 @@ wtfn_function <- R6Class(
 			}
 
 			# Find packages that have a help file for the function
-			help_packages <- utils::help.search(
+			help_pages <- utils::help.search(
 				paste0("^\\Q", self$bare_name, "\\E$"),
 				fields = "alias",
 				ignore.case = FALSE
-			)$matches$Package
+			)$matches
 
-			if (length(help_packages) < 1) {
+			if (nrow(help_pages) < 1) {
 				cli::cli_abort(c(
 					"x" = "{self$cli_name} could not be found in any installed packages.",
 					"!" = "Do you need to install the package containing it?"
@@ -127,15 +127,15 @@ wtfn_function <- R6Class(
 			# - Then, prefer base packages (e.g. `base`, `tools`, `utils`)
 			# - Then, backports if backports is a dependency
 			# - Finally, all non-dependency and non-base packages
-			help_packages <- help_packages[
+			help_pages <- help_pages[
 				order(
-					match(help_packages, setdiff(self$description$get_deps()$package, "backports")),
-					match(help_packages, row.names(installed.packages(priority = "base"))),
-					match(help_packages, intersect(self$description$get_deps()$package, "backports"))
-				)
+					match(help_pages$Package, setdiff(self$description$get_deps()$package, "backports")),
+					match(help_pages$Package, row.names(installed.packages(priority = "base"))),
+					match(help_pages$Package, intersect(self$description$get_deps()$package, "backports"))
+				),
 			]
 
-			private$pkg_holder <- help_packages[1]
+			private$pkg_holder <- help_pages$Package[1]
 			private$pkg_holder
 		},
 
