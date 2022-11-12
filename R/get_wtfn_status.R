@@ -5,7 +5,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 		message <- c(
 			message,
 			"i" = "{.strong {fun$cli_pkg} is the current package.}",
-			"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
+			"v" = "You can use {fun$cli_name}."
 		)
 
 		return(list(message = message, can_use = TRUE))
@@ -15,7 +15,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 		message <- c(
 			message,
 			"i" = "{.strong {.pkg base} functions can be used in all R packages.}",
-			"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!",
+			"v" = "You can use {fun$cli_name}.",
 		)
 
 		return(list(message = message, can_use = TRUE))
@@ -49,7 +49,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 			message <- c(
 				message,
 				"i" = "{.strong {fun$cli_name} is imported from {fun$cli_pkg} using {.var importFrom}.}",
-				"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
+				"v" = "You can use {fun$cli_name}."
 			)
 
 			return(list(message = message, can_use = TRUE))
