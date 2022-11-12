@@ -133,6 +133,13 @@ wtfn_function <- R6Class(
 			)$matches
 
 			if (nrow(help_pages) < 1) {
+				help_pages <- utils::help.search(
+					paste0("^\\Q", self$bare_name, "\\E$"),
+					fields = "alias", ignore.case = FALSE, types = "help", rebuild = TRUE
+				)$matches
+			}
+
+			if (nrow(help_pages) < 1) {
 				cli::cli_div(theme = cli_theme_wtfn())
 
 				cli::cli_abort(c(
