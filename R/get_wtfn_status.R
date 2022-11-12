@@ -38,7 +38,10 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	}
 
 	message <- c(
-		"i" = "{.strong {.pkg {fun$pkg}} is declared in {.val {dependency_type}}.}"
+		message,
+		"i" = cli::format_inline(
+			"{.strong {.pkg {fun$pkg}} is declared in {.val {dependency_type}}.}"
+		)
 	)
 
 	if (dependency_type %in% c("Imports", "Depends")) {
