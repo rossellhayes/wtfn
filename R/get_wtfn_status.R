@@ -1,4 +1,6 @@
 get_wtfn_status <- function(fun, description, namespace_imports) {
+	cli::cli_div(theme = cli_theme_wtfn())
+
 	message <- c("i" = "{.strong {fun$cli_name} is from {fun$cli_pkg}.}")
 
 	if (identical(fun$pkg, description$get_field("Package"))) {
