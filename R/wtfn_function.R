@@ -32,13 +32,8 @@ wtfn_function <- R6Class(
 
 	active = list(
 		fun = function(value) {
-			if (!missing(value)) {
-				private$fun_holder <- value
-			}
-
-			if (!is.null(private$fun_holder)) {
-				return(private$fun_holder)
-			}
+			if (!missing(value)) private$fun_holder <- value
+			if (!is.null(private$fun_holder)) return(private$fun_holder)
 
 			fun <- self$syntactic_name
 			fun <- purrr::possibly(eval, otherwise = NULL)(rlang::parse_expr(fun))
@@ -48,13 +43,8 @@ wtfn_function <- R6Class(
 		},
 
 		cli_name = function(value) {
-			if (!missing(value)) {
-				private$cli_name_holder <- value
-			}
-
-			if (!is.null(private$cli_name_holder)) {
-				return(private$cli_name_holder)
-			}
+			if (!missing(value)) private$cli_name_holder <- value
+			if (!is.null(private$cli_name_holder)) return(private$cli_name_holder)
 
 			cli::cli_div(theme = cli_theme_wtfn())
 
@@ -70,13 +60,8 @@ wtfn_function <- R6Class(
 		},
 
 		pkg = function(value) {
-			if (!missing(value)) {
-				private$pkg_holder <- value
-			}
-
-			if (!is.null(private$pkg_holder)) {
-				return(private$pkg_holder)
-			}
+			if (!missing(value)) private$pkg_holder <- value
+			if (!is.null(private$pkg_holder)) return(private$pkg_holder)
 
 			# If `fun` is imported using `importFrom()`, use that package
 			if (
@@ -134,13 +119,8 @@ wtfn_function <- R6Class(
 		},
 
 		help_page = function(value) {
-			if (!missing(value)) {
-				private$help_page_holder <- value
-			}
-
-			if (!is.null(private$help_page_holder)) {
-				return(private$help_page_holder)
-			}
+			if (!missing(value)) private$help_page_holder <- value
+			if (!is.null(private$help_page_holder)) return(private$help_page_holder)
 
 			help_pages <- utils::help.search(
 				paste0("^\\Q", self$bare_name, "\\E$"),
@@ -185,13 +165,8 @@ wtfn_function <- R6Class(
 		},
 
 		bare_name = function(value) {
-			if (!missing(value)) {
-				private$bare_name_holder <- value
-			}
-
-			if (!is.null(private$bare_name_holder)) {
-				return(private$bare_name_holder)
-			}
+			if (!missing(value)) private$bare_name_holder <- value
+			if (!is.null(private$bare_name_holder)) return(private$bare_name_holder)
 
 			name <- self$name
 			name <- sub("[[:alnum:]\\.]+:::?", "", name, perl = TRUE)
@@ -225,10 +200,7 @@ wtfn_function <- R6Class(
 		},
 
 		syntactic_name = function(value) {
-			if (!missing(value)) {
-				private$syntactic_name_holder <- value
-			}
-
+			if (!missing(value)) private$syntactic_name_holder <- value
 			if (!is.null(private$syntactic_name_holder)) {
 				return(private$syntactic_name_holder)
 			}
@@ -256,10 +228,7 @@ wtfn_function <- R6Class(
 		},
 
 		namespaced_name = function(value) {
-			if (!missing(value)) {
-				private$namespaced_name_holder <- value
-			}
-
+			if (!missing(value)) private$namespaced_name_holder <- value
 			if (!is.null(private$namespaced_name_holder)) {
 				return(private$namespaced_name_holder)
 			}
@@ -276,10 +245,7 @@ wtfn_function <- R6Class(
 		},
 
 		cli_namespaced_name = function(value) {
-			if (!missing(value)) {
-				private$cli_namespaced_name_holder <- value
-			}
-
+			if (!missing(value)) private$cli_namespaced_name_holder <- value
 			if (!is.null(private$cli_namespaced_name_holder)) {
 				return(private$cli_namespaced_name_holder)
 			}
@@ -312,9 +278,7 @@ wtfn_function <- R6Class(
 		},
 
 		is_infix = function() {
-			if (!is.null(private$is_infix_holder)) {
-				return(private$is_infix_holder)
-			}
+			if (!is.null(private$is_infix_holder)) return(private$is_infix_holder)
 
 			private$is_infix_holder <-
 				!self$is_closure ||
@@ -324,9 +288,7 @@ wtfn_function <- R6Class(
 		},
 
 		is_closure = function() {
-			if (!is.null(private$is_closure_holder)) {
-				return(private$is_closure_holder)
-			}
+			if (!is.null(private$is_closure_holder)) return(private$is_closure_holder)
 
 			private$is_closure_holder <- identical(typeof(self$fun), "closure")
 			private$is_closure_holder
