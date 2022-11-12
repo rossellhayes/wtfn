@@ -15,7 +15,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 		message <- c(
 			message,
 			"i" = "{.strong {.pkg base} functions can be used in all R packages.}",
-			"v" = "You can use {fun$cli_name}.",
+			"v" = "You can use {fun$cli_name}."
 		)
 
 		return(list(message = message, can_use = TRUE))
