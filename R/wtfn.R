@@ -18,7 +18,7 @@ unquote <- function(x) {
 
 cli_theme_wtfn <- function() {
 	list(
-		span.fun = list(color = "blue"),
+		span.emph = list(color = "blue", `font-style` = NULL),
 		span.run = list(transform = function(x) {
 			x <- cli::builtin_theme()$span.run$transform(x)
 			cli::builtin_theme()$span.code$transform(x)

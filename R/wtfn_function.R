@@ -1,9 +1,10 @@
 wtfn_function <- R6Class(
 	"wtfn_function",
 	public = list(
-		name = NULL,
 		description = NULL,
 		namespace_imports = NULL,
+
+		name = NULL,
 
 		initialize = function(
 		  fun = NULL,
@@ -57,10 +58,10 @@ wtfn_function <- R6Class(
 
 			cli::cli_div(theme = cli_theme_wtfn())
 
-			if (self$is_function && !self$is_infix) {
-				private$cli_name_holder <- cli::format_inline("{.fun {self$name}}")
+			private$cli_name_holder <- if (self$is_function && !self$is_infix) {
+				cli::format_inline("{.emph `{.help [{self$name}]({self$help_topic})}()`}")
 			} else {
-				private$cli_name_holder <- cli::format_inline("{.var {self$name}}")
+				cli::format_inline("{.emph `{.topic [{self$name}]({self$help_topic})}`}")
 			}
 
 			private$cli_name_holder
@@ -107,7 +108,19 @@ wtfn_function <- R6Class(
 				}
 			}
 
-			# Find packages that have a help file for the function
+			private$pkg_holder <- self$help_page$Package
+			private$pkg_holder
+		},
+
+		help_page = function(value) {
+			if (!missing(value)) {
+				private$help_page_holder <- value
+			}
+
+			if (!is.null(private$help_page_holder)) {
+				return(private$help_page_holder)
+			}
+
 			help_pages <- utils::help.search(
 				paste0("^\\Q", self$bare_name, "\\E$"),
 				fields = "alias",
@@ -135,8 +148,20 @@ wtfn_function <- R6Class(
 				),
 			]
 
-			private$pkg_holder <- help_pages$Package[1]
-			private$pkg_holder
+			if (!is.null(private$pkg_holder)) {
+				help_pages <- help_pages[help_pages$Package == private$pkg_holder, ]
+			}
+
+			private$help_page_holder <- help_pages[1, ]
+			private$help_page_holder
+		},
+
+		help_topic = function(value) {
+			if (!missing(value)) private$help_topic_holder <- value
+			if (!is.null(private$help_topic_holder)) return(private$help_topic_holder)
+
+			private$help_topic_holder <- paste0(self$pkg, "::", self$help_page$Topic)
+			private$help_topic_holder
 		},
 
 		bare_name = function(value) {
@@ -217,13 +242,16 @@ wtfn_function <- R6Class(
 
 			cli::cli_div(theme = cli_theme_wtfn())
 
-			if (self$is_infix) {
-				private$cli_namespaced_name_holder <-
-					cli::format_inline("{.var {self$namespaced_name}}")
-			} else {
-				private$cli_namespaced_name_holder <-
-					cli::format_inline("{.fun {self$namespaced_name}}")
-			}
+			private$cli_namespaced_name_holder <-
+				if (self$is_function && !self$is_infix) {
+					cli::format_inline(
+						"{.emph `{.help [{self$namespaced_name}]({self$help_topic})}()`}"
+					)
+				} else {
+					cli::format_inline(
+						"{.emph `{.topic [{self$namespaced_name}]({self$help_topic})}`}"
+					)
+				}
 
 			private$cli_namespaced_name_holder
 		},
@@ -263,6 +291,8 @@ wtfn_function <- R6Class(
 		fun_holder = NULL,
 		cli_name_holder = NULL,
 		pkg_holder = NULL,
+		help_page_holder = NULL,
+		help_topic_holder = NULL,
 		bare_name_holder = NULL,
 		syntactic_name_holder = NULL,
 		namespaced_name_holder = NULL,
