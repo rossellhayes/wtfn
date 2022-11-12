@@ -1,10 +1,10 @@
 get_wtfn_status <- function(fun, description, namespace_imports) {
-	message <- c("i" = "{.strong {fun$cli_name} is from {.pkg {fun$pkg}}.}")
+	message <- c("i" = "{.strong {fun$cli_name} is from {fun$cli_pkg}.}")
 
 	if (identical(fun$pkg, description$get_field("Package"))) {
 		message <- c(
 			message,
-			"i" = "{.strong {.pkg {fun$pkg}} is the current package.}",
+			"i" = "{.strong {fun$cli_pkg} is the current package.}",
 			"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
 		)
 
@@ -26,10 +26,10 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	if (is.na(dependency_type)) {
 		message <- c(
 			message,
-			"i" = "{.strong {.pkg {fun$pkg}} is not a declared dependency.}",
+			"i" = "{.strong {fun$cli_pkg} is not a declared dependency.}",
 			"x" = paste(
 				"You can't use {fun$cli_name},",
-				"because your package doesn't depend on {.pkg {fun$pkg}}."
+				"because your package doesn't depend on {fun$cli_pkg}."
 			),
 			"*" = 'Use {.run usethis::use_package("{fun$pkg}")} to add it as a dependency.'
 		)
@@ -40,7 +40,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	message <- c(
 		message,
 		"i" = cli::format_inline(
-			"{.strong {.pkg {fun$pkg}} is declared in {.val {dependency_type}}.}"
+			"{.strong {fun$cli_pkg} is declared in {.val {dependency_type}}.}"
 		)
 	)
 
@@ -48,7 +48,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 		if (is_imported(fun$bare_name, from = fun$pkg)) {
 			message <- c(
 				message,
-				"i" = "{.strong {fun$cli_name} is imported from {.pkg {fun$pkg}} using {.var importFrom}.}",
+				"i" = "{.strong {fun$cli_name} is imported from {fun$cli_pkg} using {.var importFrom}.}",
 				"v" = "You can use {fun$cli_name}. You don't even need to include a namespace!"
 			)
 
@@ -86,7 +86,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 		"*" = paste(
 			'In your package code, use {.code rlang::is_installed("{fun$pkg}")}',
 			'or {.code rlang::check_installed("{fun$pkg}")}',
-			'to test if {.pkg {fun$pkg}} is installed.'
+			'to test if {fun$cli_pkg} is installed.'
 		),
 		"*" = "Then refer to it with {fun$cli_namespaced_name}."
 	)

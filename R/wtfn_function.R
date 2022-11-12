@@ -112,6 +112,25 @@ wtfn_function <- R6Class(
 			private$pkg_holder
 		},
 
+		cli_pkg = function(value) {
+			if (!missing(value)) private$cli_pkg_holder <- value
+			if (!is.null(private$cli_pkg_holder)) return(private$cli_pkg_holder)
+
+			cli::cli_div(theme = cli_theme_wtfn())
+
+			pkg_help_page <- utils::help.search(
+				paste0("^\\Q", self$pkg, "-package", "\\E$"),
+				fields = "alias", ignore.case = FALSE, package = self$pkg
+			)$matches$Topic[[1]]
+
+			pkg_help_page <- paste0(self$pkg, "::", pkg_help_page)
+
+			private$cli_pkg_holder <-
+				cli::format_inline("{.help [{.pkg {self$pkg}}]({pkg_help_page})}")
+
+			private$cli_pkg_holder
+		},
+
 		help_page = function(value) {
 			if (!missing(value)) {
 				private$help_page_holder <- value
@@ -123,8 +142,7 @@ wtfn_function <- R6Class(
 
 			help_pages <- utils::help.search(
 				paste0("^\\Q", self$bare_name, "\\E$"),
-				fields = "alias",
-				ignore.case = FALSE
+				fields = "alias", ignore.case = FALSE, types = "help"
 			)$matches
 
 			if (nrow(help_pages) < 1) {
@@ -291,6 +309,7 @@ wtfn_function <- R6Class(
 		fun_holder = NULL,
 		cli_name_holder = NULL,
 		pkg_holder = NULL,
+		cli_pkg_holder = NULL,
 		help_page_holder = NULL,
 		help_topic_holder = NULL,
 		bare_name_holder = NULL,
