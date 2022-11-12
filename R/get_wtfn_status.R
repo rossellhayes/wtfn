@@ -45,7 +45,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	)
 
 	if (dependency_type %in% c("Imports", "Depends")) {
-		if (is_imported(fun$bare_name, from = fun$pkg)) {
+		if (is_imported(fun, namespace_imports)) {
 			message <- c(
 				message,
 				"i" = "{.strong {fun$cli_name} is imported from {fun$cli_pkg} using {.var importFrom}.}",
