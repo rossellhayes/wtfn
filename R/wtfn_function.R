@@ -325,6 +325,7 @@ wtfn_function <- R6Class(
 
 			private$is_infix_holder <-
 				!self$is_closure ||
+				identical(self$bare_name, ":=") ||
 				grepl("%.*%", self$name, perl = TRUE)
 
 			private$is_infix_holder
