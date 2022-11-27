@@ -84,21 +84,21 @@ wtfn_function <- R6Class(
 			}
 
 			if (!is.null(self$fun)) {
-				if (self$is_function && !self$is_closure) {
-					# Normal functions (e.g. `mean`) and infix functions (e.g. `%in%`)
-					# have class `function` and type `closure`.
-					# Special operators (e.g. `+` or `<-`) also have class `function`,
-					# but type `builtin` or `special`.
-					# Special operators can't be exported from packages,
-					# so if a function is not a `closure`, it must be from `base`.
-					return("base")
-				}
-
 				# If `fun` can be evaluated with the current search path, use that package
 				env <- environment(self$fun)
 
 				if (rlang::is_namespace(env)) {
 					private$pkg_holder <- environmentName(env)
+					return(private$pkg_holder)
+				}
+
+				# If you use `environment()` on a special operators (e.g. `+` or `<-`),
+				# you get `NULL`.
+				# Most special operators come from `base`,
+				# so that's a good place to check
+				# if `self$fun` exists but `env` isn't an environment.
+				if (self$bare_name %in% ls(asNamespace("base"), all.names = TRUE)) {
+					private$pkg_holder <- "base"
 					return(private$pkg_holder)
 				}
 			}
