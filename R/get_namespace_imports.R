@@ -6,7 +6,7 @@ get_namespace_imports <- function(file = ".") {
 	namespace_exprs <- rlang::parse_exprs(namespace)
 	importFrom_exprs <- purrr::keep(
 		namespace_exprs,
-		function(x) identical(x[[1]], rlang::expr(importFrom))
+		function(x) identical(x[[1]], rlang::sym("importFrom"))
 	)
 
 	purrr::map_dfr(
