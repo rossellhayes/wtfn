@@ -16,5 +16,5 @@ get_namespace_imports <- function(file = ".") {
 }
 
 empty_imports <- function() {
-	tibble::tibble(pkg = character(0), fun = character(0))
+	dplyr::tibble(pkg = character(0), fun = character(0))
 }
