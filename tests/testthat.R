@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(caniuse)
+library(wtfn)
 
-test_check("caniuse")
+test_check("wtfn")
