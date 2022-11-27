@@ -49,11 +49,19 @@ wtfn_function <- R6Class(
 			cli::cli_div(theme = cli_theme_wtfn())
 
 			private$cli_name_holder <- if (self$is_function && !self$is_infix) {
-				cli::format_inline("{.var {.help [{self$name}]({self$help_topic})}()}")
+				if (cli::ansi_has_hyperlink_support()) {
+					cli::format_inline("{.var {.help [{self$name}]({self$help_topic})}()}")
+				} else {
+					cli::format_inline("{.var {self$name}()}")
+				}
 			} else {
-				# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
-				# Adding empty braces resolves this.
-				cli::format_inline("{.var {.topic [{self$name}]({self$help_topic})}{}}")
+				if (cli::ansi_has_hyperlink_support()) {
+					# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
+					# Adding empty braces resolves this.
+					cli::format_inline("{.var {.topic [{self$name}]({self$help_topic})}{}}")
+				} else {
+					cli::format_inline("{.var {self$name}}")
+				}
 			}
 
 			private$cli_name_holder
@@ -104,6 +112,11 @@ wtfn_function <- R6Class(
 			if (!is.null(private$cli_pkg_holder)) return(private$cli_pkg_holder)
 
 			cli::cli_div(theme = cli_theme_wtfn())
+
+			if (!cli::ansi_has_hyperlink_support()) {
+				private$cli_pkg_holder <- cli::format_inline("{.pkg {self$pkg}}")
+				return(private$cli_pkg_holder)
+			}
 
 			pkg_help_pages <- utils::help.search(
 				paste0("^\\Q", self$pkg, "-package", "\\E$"),
@@ -199,15 +212,23 @@ wtfn_function <- R6Class(
 
 			private$cli_bare_name_holder <-
 				if (self$is_function && !self$is_infix) {
-					cli::format_inline(
-						"{.var {.help [{self$bare_name}]({self$help_topic})}()}"
-					)
+					if (cli::ansi_has_hyperlink_support()) {
+						cli::format_inline(
+							"{.var {.help [{self$bare_name}]({self$help_topic})}()}"
+						)
+					} else {
+						cli::format_inline("{.var {self$bare_name}()}")
+					}
 				} else {
-					# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
-					# Adding empty braces resolves this.
-					cli::format_inline(
-						"{.var {.topic [{self$bare_name}]({self$help_topic})}{}}"
-					)
+					if (cli::ansi_has_hyperlink_support()) {
+						# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
+						# Adding empty braces resolves this.
+						cli::format_inline(
+							"{.var {.topic [{self$bare_name}]({self$help_topic})}{}}"
+						)
+					} else {
+						cli::format_inline("{.var {self$bare_name}}")
+					}
 				}
 
 			private$cli_bare_name_holder
@@ -268,15 +289,23 @@ wtfn_function <- R6Class(
 
 			private$cli_namespaced_name_holder <-
 				if (self$is_function && !self$is_infix) {
-					cli::format_inline(
-						"{.var {.help [{self$namespaced_name}]({self$help_topic})}()}"
-					)
+					if (cli::ansi_has_hyperlink_support()) {
+						cli::format_inline(
+							"{.var {.help [{self$namespaced_name}]({self$help_topic})}()}"
+						)
+					} else {
+						cli::format_inline("{.var {self$namespaced_name}()}")
+					}
 				} else {
-					# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
-					# Adding empty braces resolves this.
-					cli::format_inline(
-						"{.var {.topic [{self$namespaced_name}]({self$help_topic})}{}}"
-					)
+					if (cli::ansi_has_hyperlink_support()) {
+						# `.var` will not apply it's style to a lone hyperlink (r-lib/cli#541).
+						# Adding empty braces resolves this.
+						cli::format_inline(
+							"{.var {.topic [{self$namespaced_name}]({self$help_topic})}{}}"
+						)
+					} else {
+						cli::format_inline("{.var {self$namespaced_name}}")
+					}
 				}
 
 			private$cli_namespaced_name_holder
