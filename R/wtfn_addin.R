@@ -10,6 +10,14 @@ function_under_cursor <- function() {
 
 	# If nothing is selected, get code from current active RStudio context
 	context <- rstudioapi::getActiveDocumentContext()
+
+	if (context$id == "#console") {
+		icon <- cli::style_bold(cli::col_cyan("?"))
+		cli::cli_inform("{icon} What's the function? ")
+		code <- readline("> ")
+		return(code)
+	}
+
 	cursor <- context$selection[[1]]$range$start
 
 	# `getActiveDocumentContext()` and `getParseData()` handle tabs differently.
