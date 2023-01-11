@@ -7,6 +7,7 @@ wtfn <- function(fun) {
 	wtfn_status <- get_wtfn_status(fun, description, namespace_imports)
 
 	cli::cli_div(theme = cli_theme_wtfn)
+	cli::cli_inform(wtfn_status$headline)
 	cli::cli_inform(wtfn_status$message)
 	if (length(backports_message) > 0) cli::cli_inform(backports_message)
 	invisible(wtfn_status$can_use)
