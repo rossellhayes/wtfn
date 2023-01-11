@@ -12,8 +12,8 @@ function_under_cursor <- function() {
 	context <- rstudioapi::getActiveDocumentContext()
 
 	if (context$id == "#console") {
-		icon <- cli::style_bold(cli::col_cyan("?"))
-		cli::cli_inform("{icon} What's the function? ")
+		cli::cli_div(theme = cli_theme_wtfn)
+		cli::cli_inform(c("?" = "What's the function?"))
 		code <- readline("> ")
 		return(code)
 	}

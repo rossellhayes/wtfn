@@ -46,7 +46,7 @@ wtfn_function <- R6Class(
 			if (!missing(value)) private$cli_name_holder <- value
 			if (!is.null(private$cli_name_holder)) return(private$cli_name_holder)
 
-			cli::cli_div(theme = cli_theme_wtfn())
+			cli::cli_div(theme = cli_theme_wtfn)
 
 			private$cli_name_holder <- if (self$is_function && !self$is_infix) {
 				if (cli::ansi_has_hyperlink_support()) {
@@ -111,7 +111,7 @@ wtfn_function <- R6Class(
 			if (!missing(value)) private$cli_pkg_holder <- value
 			if (!is.null(private$cli_pkg_holder)) return(private$cli_pkg_holder)
 
-			cli::cli_div(theme = cli_theme_wtfn())
+			cli::cli_div(theme = cli_theme_wtfn)
 
 			if (!cli::ansi_has_hyperlink_support()) {
 				private$cli_pkg_holder <- cli::format_inline("{.pkg {self$pkg}}")
@@ -153,7 +153,7 @@ wtfn_function <- R6Class(
 			}
 
 			if (nrow(help_pages) < 1) {
-				cli::cli_div(theme = cli_theme_wtfn())
+				cli::cli_div(theme = cli_theme_wtfn)
 
 				cli::cli_abort(c(
 					"x" = "{.var {self$name}} could not be found in any installed packages.",
@@ -208,7 +208,7 @@ wtfn_function <- R6Class(
 				return(private$cli_bare_name_holder)
 			}
 
-			cli::cli_div(theme = cli_theme_wtfn())
+			cli::cli_div(theme = cli_theme_wtfn)
 
 			private$cli_bare_name_holder <-
 				if (self$is_function && !self$is_infix) {
@@ -285,7 +285,7 @@ wtfn_function <- R6Class(
 				return(private$cli_namespaced_name_holder)
 			}
 
-			cli::cli_div(theme = cli_theme_wtfn())
+			cli::cli_div(theme = cli_theme_wtfn)
 
 			private$cli_namespaced_name_holder <-
 				if (self$is_function && !self$is_infix) {
