@@ -11,13 +11,6 @@ function_under_cursor <- function() {
 	# If nothing is selected, get code from current active RStudio context
 	context <- rstudioapi::getActiveDocumentContext()
 
-	if (context$id == "#console") {
-		cli::cli_div(theme = cli_theme_wtfn)
-		cli::cli_inform(c("?" = "What's the function?"))
-		code <- readline("> ")
-		return(code)
-	}
-
 	cursor <- context$selection[[1]]$range$start
 
 	# `getActiveDocumentContext()` and `getParseData()` handle tabs differently.
@@ -42,6 +35,13 @@ function_under_cursor <- function() {
 			# not any exprs that contain that token.
 			parse_data$token != "expr",
 	]
+
+	if (nrow(found_symbol) == 0) {
+		cli::cli_div(theme = cli_theme_wtfn)
+		cli::cli_inform(c("?" = "What's the function?"))
+		code <- readline("> ")
+		return(code)
+	}
 
 	# Found symbol may not contain the entire expression under the cursor.
 	# For example, a namespaced function contains three symbols:
