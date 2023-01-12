@@ -1,5 +1,9 @@
 wtfn_addin <- function() {
-	wtfn(function_under_cursor())
+	wtfn(function_under_cursor(), verbose = TRUE)
+}
+
+wtfn_addin_short <- function() {
+	wtfn(function_under_cursor(), verbose = FALSE)
 }
 
 function_under_cursor <- function() {

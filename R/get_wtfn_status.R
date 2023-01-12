@@ -88,7 +88,9 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 
 	# If we reach this point,
 	# `dependency_type` is "Suggests", "Enhances", "LinkingTo" or something weird
-	headline <- c("!" = "{.strong You can use {fun$cli_name} {.emph carefully}.}")
+	headline <- c(
+		"!" = "{.strong You can use {fun$cli_namespaced_name} {.emph carefully}.}"
+	)
 
 	message <- c(
 		message,
