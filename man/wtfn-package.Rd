@@ -2,7 +2,6 @@
 % Please edit documentation in R/wtfn-package.R
 \docType{package}
 \name{wtfn-package}
-\alias{wtfn}
 \alias{wtfn-package}
 \title{wtfn: Where's This Function?}
 \description{
