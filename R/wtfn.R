@@ -24,6 +24,9 @@ wtfn <- function(fun, verbose = TRUE) {
 
 	backports_message <- generate_backports_message(fun, description)
 	wtfn_status <- get_wtfn_status(fun, description, namespace_imports)
+	wtfn_status$headline <- paste0_preserve_names(
+		"{.strong ", wtfn_status$headline, "}"
+	)
 
 	cli::cli_div(theme = cli_theme_wtfn)
 
@@ -31,7 +34,7 @@ wtfn <- function(fun, verbose = TRUE) {
 		cli::cli_div(theme = list(
 			span.run = list(transform = cli::builtin_theme()$span.run$transform)
 		))
-		wtfn_status$headline <- paste0_with_names(
+		wtfn_status$headline <- paste0_preserve_names(
 			wtfn_status$headline, " ",
 			'[{.run [more](wtfn::wtfn("', fun$name, '", verbose = TRUE))}]'
 		)
@@ -47,10 +50,9 @@ wtfn <- function(fun, verbose = TRUE) {
 	invisible(wtfn_status$can_use)
 }
 
-paste0_with_names <- function(x, ...) {
-	names <- names(x)
-	res <- paste0(x, ...)
-	names(res) <- names(x)
+paste0_preserve_names <- function(...) {
+	res <- paste0(...)
+	names(res) <- purrr::compact(purrr::map(list(...), names))[[1]]
 	res
 }
 

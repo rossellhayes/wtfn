@@ -4,7 +4,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	message <- c("i" = "{fun$cli_name} is from {fun$cli_pkg}.")
 
 	if (identical(fun$pkg, description$get_field("Package"))) {
-		headline <- c("v" = "{.strong You can use {fun$cli_bare_name}.}")
+		headline <- c("v" = "You can use {fun$cli_bare_name}.")
 
 		message <- c(message, "i" = "{fun$cli_pkg} is the current package.")
 
@@ -12,7 +12,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	}
 
 	if (identical(fun$pkg, "base")) {
-		headline <- c("v" = "{.strong You can use {fun$cli_bare_name}.}")
+		headline <- c("v" = "You can use {fun$cli_bare_name}.")
 
 		message <- c(
 			message,
@@ -27,8 +27,8 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	if (is.na(dependency_type)) {
 		headline <- c(
 			"x" = paste(
-				"{.strong You can't use {fun$cli_name},",
-				"because your package doesn't depend on {fun$cli_pkg}.}"
+				"You can't use {fun$cli_name},",
+				"because your package doesn't depend on {fun$cli_pkg}."
 			)
 		)
 
@@ -50,7 +50,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 
 	if (dependency_type %in% c("Imports", "Depends")) {
 		if (is_imported(fun, namespace_imports)) {
-			headline <- c("v" = "{.strong You can use {fun$cli_bare_name}.}")
+			headline <- c("v" = "You can use {fun$cli_bare_name}.")
 
 			message <- c(
 				message,
@@ -60,7 +60,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 			return(list(headline = headline, message = message, can_use = TRUE))
 		}
 
-		headline <- c("v" = "{.strong You can use {fun$cli_namespaced_name}.}")
+		headline <- c("v" = "You can use {fun$cli_namespaced_name}.")
 
 		if (fun$is_infix) {
 			message <- c(
@@ -86,7 +86,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	# If we reach this point,
 	# `dependency_type` is "Suggests", "Enhances", "LinkingTo" or something weird
 	headline <- c(
-		"!" = "{.strong You can use {fun$cli_namespaced_name} {.emph carefully}.}"
+		"!" = "You can use {fun$cli_namespaced_name} {.emph carefully}."
 	)
 
 	message <- c(
