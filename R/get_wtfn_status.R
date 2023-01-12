@@ -1,15 +1,12 @@
 get_wtfn_status <- function(fun, description, namespace_imports) {
 	cli::cli_div(theme = cli_theme_wtfn)
 
-	message <- c("i" = "{.strong {fun$cli_name} is from {fun$cli_pkg}.}")
+	message <- c("i" = "{fun$cli_name} is from {fun$cli_pkg}.")
 
 	if (identical(fun$pkg, description$get_field("Package"))) {
 		headline <- c("v" = "{.strong You can use {fun$cli_bare_name}.}")
 
-		message <- c(
-			message,
-			"i" = "{.strong {fun$cli_pkg} is the current package.}"
-		)
+		message <- c(message, "i" = "{fun$cli_pkg} is the current package.")
 
 		return(list(headline = headline, message = message, can_use = TRUE))
 	}
@@ -19,7 +16,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 
 		message <- c(
 			message,
-			"i" = "{.strong {fun$cli_pkg} functions can be used in all R packages.}"
+			"i" = "{fun$cli_pkg} functions can be used in all R packages."
 		)
 
 		return(list(headline = headline, message = message, can_use = TRUE))
@@ -37,7 +34,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 
 		message <- c(
 			message,
-			"i" = "{.strong {fun$cli_pkg} is not a declared dependency.}",
+			"i" = "{fun$cli_pkg} is not a declared dependency.",
 			"*" = 'Use {.run usethis::use_package("{fun$pkg}")} to add it as a dependency.'
 		)
 
@@ -47,7 +44,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	message <- c(
 		message,
 		"i" = cli::format_inline(
-			"{.strong {fun$cli_pkg} is declared in {.val {dependency_type}}.}"
+			"{fun$cli_pkg} is declared in {.val {dependency_type}}."
 		)
 	)
 
@@ -57,7 +54,7 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 
 			message <- c(
 				message,
-				"i" = "{.strong {fun$cli_name} is imported from {fun$cli_pkg} using {.var importFrom}.}",
+				"i" = "{fun$cli_name} is imported from {fun$cli_pkg} using {.var importFrom}."
 			)
 
 			return(list(headline = headline, message = message, can_use = TRUE))
