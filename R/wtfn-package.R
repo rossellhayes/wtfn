@@ -1,4 +1,5 @@
 #' @keywords internal
+#' @aliases wtfn-package NULL
 "_PACKAGE"
 
 ## usethis namespace: start
