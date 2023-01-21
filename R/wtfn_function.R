@@ -1,3 +1,6 @@
+# @staticimports pkg:stringstatic
+#   str_extract
+
 wtfn_function <- R6Class(
 	"wtfn_function",
 	public = list(
@@ -71,6 +74,12 @@ wtfn_function <- R6Class(
 			if (!missing(value)) private$pkg_holder <- value
 			if (!is.null(private$pkg_holder)) return(private$pkg_holder)
 
+			# If `fun` is namespaced, use that package
+			if (!is.na(self$namespace_pkg)) {
+				private$pkg_holder <- self$namespace_pkg
+				return(private$pkg_holder)
+			}
+
 			# If `fun` is imported using `importFrom()`, use that package
 			if (
 				nrow(self$namespace_imports) > 0 &&
@@ -134,6 +143,22 @@ wtfn_function <- R6Class(
 				cli::format_inline("{.help [{.pkg {self$pkg}}]({pkg_help_page})}")
 
 			private$cli_pkg_holder
+		},
+
+		namespace_pkg = function(value) {
+			if (!missing(value)) {
+				private$namespace_pkg_holder <- value
+			}
+
+			if (!is.null(private$namespace_pkg_holder)) {
+				return(private$namespace_pkg_holder)
+			}
+
+			private$namespace_pkg_holder <- str_extract(
+				self$name,
+				"[[:alnum:]\\.]+(?=:::?)"
+			)
+			private$namespace_pkg_holder
 		},
 
 		help_page = function(value) {
@@ -344,6 +369,7 @@ wtfn_function <- R6Class(
 		cli_name_holder = NULL,
 		pkg_holder = NULL,
 		cli_pkg_holder = NULL,
+		namespace_pkg_holder = NULL,
 		help_page_holder = NULL,
 		help_topic_holder = NULL,
 		bare_name_holder = NULL,
