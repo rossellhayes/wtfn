@@ -3,6 +3,24 @@
 # Imported from pkg:stringstatic
 # ======================================================================
 
+str_detect <- function(string, pattern, negate = FALSE) {
+	if (length(string) == 0 || length(pattern) == 0) return(logical(0))
+
+	is_fixed <- inherits(pattern, "stringr_fixed")
+
+	indices <- Vectorize(grep, c("pattern", "x"), USE.NAMES = FALSE)(
+		pattern,
+		x = string,
+		perl = !is_fixed,
+		fixed = is_fixed,
+		invert = negate
+	)
+
+	result <- as.logical(lengths(indices))
+	result[is.na(string)] <- NA
+	result
+}
+
 str_extract <- function(string, pattern) {
 	if (length(string) == 0 || length(pattern) == 0) return(character(0))
 
@@ -24,4 +42,18 @@ str_extract <- function(string, pattern) {
 
 	result[lengths(result) == 0] <- NA_character_
 	unlist(result)
+}
+
+str_remove <- function(string, pattern) {
+	is_fixed <- inherits(pattern, "stringr_fixed")
+	Vectorize(sub, c("pattern", "x"), USE.NAMES = FALSE)(
+		pattern, replacement = "", x = string, perl = !is_fixed, fixed = is_fixed
+	)
+}
+
+str_remove_all <- function(string, pattern) {
+	is_fixed <- inherits(pattern, "stringr_fixed")
+	Vectorize(gsub, c("pattern", "x"), USE.NAMES = FALSE)(
+		pattern, replacement = "", x = string, perl = !is_fixed, fixed = is_fixed
+	)
 }
