@@ -1,9 +1,12 @@
 Package: wtfn
 Title: Where's This Function?
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R: c(
     person("Alexander", "Rossell Hayes", , "alexander@rossellhayes.com", role = c("aut", "cre", "cph"),
-           comment = c(ORCID = "0000-0001-9412-0457"))
+           comment = c(ORCID = "0000-0001-9412-0457")),
+    person("Garrick", "Aden-Buie", , "garrick@adenbuie.com", role = "ctb",
+           comment = c(ORCID = "0000-0002-7111-0077"))
+  )
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 URL: https://github.com/rossellhayes/wtfn
