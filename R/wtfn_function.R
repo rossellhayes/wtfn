@@ -1,3 +1,6 @@
+# @staticimports pkg:stringstatic
+#   str_detect str_extract str_remove str_remove_all
+
 wtfn_function <- R6Class(
 	"wtfn_function",
 	public = list(
@@ -71,6 +74,12 @@ wtfn_function <- R6Class(
 			if (!missing(value)) private$pkg_holder <- value
 			if (!is.null(private$pkg_holder)) return(private$pkg_holder)
 
+			# If `fun` is namespaced, use that package
+			if (!is.na(self$namespace_pkg)) {
+				private$pkg_holder <- self$namespace_pkg
+				return(private$pkg_holder)
+			}
+
 			# If `fun` is imported using `importFrom()`, use that package
 			if (
 				nrow(self$namespace_imports) > 0 &&
@@ -136,6 +145,22 @@ wtfn_function <- R6Class(
 			private$cli_pkg_holder
 		},
 
+		namespace_pkg = function(value) {
+			if (!missing(value)) {
+				private$namespace_pkg_holder <- value
+			}
+
+			if (!is.null(private$namespace_pkg_holder)) {
+				return(private$namespace_pkg_holder)
+			}
+
+			private$namespace_pkg_holder <- str_extract(
+				self$name,
+				"[[:alnum:]\\.]+(?=:::?)"
+			)
+			private$namespace_pkg_holder
+		},
+
 		help_page = function(value) {
 			if (!missing(value)) private$help_page_holder <- value
 			if (!is.null(private$help_page_holder)) return(private$help_page_holder)
@@ -196,8 +221,8 @@ wtfn_function <- R6Class(
 			if (!is.null(private$bare_name_holder)) return(private$bare_name_holder)
 
 			name <- self$name
-			name <- sub("[[:alnum:]\\.]+:::?", "", name, perl = TRUE)
-			name <- gsub("^`|`$", "", name, perl = TRUE)
+			name <- str_remove(name, "[[:alnum:]\\.]+:::?")
+			name <- str_remove_all(name, "^`|`$")
 			private$bare_name_holder <- name
 			private$bare_name_holder
 		},
@@ -243,12 +268,9 @@ wtfn_function <- R6Class(
 			name <- self$name
 			namespace <- ""
 
-			if (grepl("[[:alnum:]\\.]+:::?", name)) {
-				namespace <- regmatches(
-					name,
-					regexpr("[[:alnum:]\\.]+:::?", name)
-				)
-				name <- sub("[[:alnum:]\\.]+:::?", "", name)
+			if (str_detect(name, "[[:alnum:]\\.]+:::?")) {
+				namespace <- str_extract(name, "[[:alnum:]\\.]+:::?")
+				name <- str_remove(name, "[[:alnum:]\\.]+:::?")
 			}
 
 			name <- rlang::expr_text(rlang::sym(name))
@@ -268,7 +290,7 @@ wtfn_function <- R6Class(
 				return(private$namespaced_name_holder)
 			}
 
-			if (grepl("[[:alnum:]\\.]+:::?", self$syntactic_name)) {
+			if (str_detect(self$syntactic_name, "[[:alnum:]\\.]+:::?")) {
 				private$namespaced_name_holder <- self$syntactic_name
 			} else {
 				private$namespaced_name_holder <- paste0(
@@ -326,7 +348,7 @@ wtfn_function <- R6Class(
 			private$is_infix_holder <-
 				!self$is_closure ||
 				identical(self$bare_name, ":=") ||
-				grepl("%.*%", self$name, perl = TRUE)
+				str_detect(self$name, "%.*%")
 
 			private$is_infix_holder
 		},
@@ -344,6 +366,7 @@ wtfn_function <- R6Class(
 		cli_name_holder = NULL,
 		pkg_holder = NULL,
 		cli_pkg_holder = NULL,
+		namespace_pkg_holder = NULL,
 		help_page_holder = NULL,
 		help_topic_holder = NULL,
 		bare_name_holder = NULL,
