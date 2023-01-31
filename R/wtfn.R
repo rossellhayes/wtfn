@@ -63,7 +63,9 @@ unquote <- function(x) {
 cli_theme_wtfn <- list(
 	span.run = list(
 		transform = function(x) {
-			x <- cli::builtin_theme()$span.run$transform(x)
+			if (cli::ansi_has_hyperlink_support()) {
+				x <- cli::builtin_theme()$span.run$transform(x)
+			}
 			cli::builtin_theme()$span.code$transform(x)
 		}
 	),
