@@ -8,7 +8,10 @@
 #'   If `verbose` is [`TRUE`], `wtfn()` prints all information about `fun`.
 #'   If `verbose` is [`FALSE`], `wtfn()` prints a single line indicating if you
 #'   can use `fun` in your package given its current dependencies.
-#'   Defaults to [`TRUE`].
+#'
+#'   You can set a default value for `verbose` using
+#'   [`options("wtfn.verbose" = )`][options].
+#'   If the option is unset, defaults to [`TRUE`].
 #'
 #' @return Invisibly returns [`TRUE`] if you can use `fun` in your package
 #'   given your current dependencies and [`FALSE`] if you cannot.
@@ -17,7 +20,7 @@
 #' @examples
 #' wtfn("paste")
 #' wtfn("wtfn::wtfn")
-wtfn <- function(fun, verbose = TRUE) {
+wtfn <- function(fun, verbose = getOption("wtfn.verbose", default = TRUE)) {
 	description <- desc::description$new()$normalize()
 	namespace_imports <- get_namespace_imports()
 	fun <- wtfn_function$new({{fun}}, description, namespace_imports)

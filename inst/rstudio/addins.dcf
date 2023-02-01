@@ -1,9 +1,19 @@
-Name: Where's this function? (verbose output)
-Description: Checks if the currently selected function can be used in your package, or if you need to add a dependency.
+Name: Where's this function?
+Description: Checks if the currently selected function can be used in your package,
+		or if you need to add a dependency.
 Binding: wtfn_addin
 Interactive: true
 
 Name: Where's this function? (compact output)
-Description: Checks if the currently selected function can be used in your package, or if you need to add a dependency.
+Description: Checks if the currently selected function can be used in your package,
+		or if you need to add a dependency.
+		Always returns one-line output.
 Binding: wtfn_addin_short
+Interactive: true
+
+Name: Where's this function? (verbose output)
+Description: Checks if the currently selected function can be used in your package,
+		or if you need to add a dependency.
+		Always returns verbose output.
+Binding: wtfn_addin_verbose
 Interactive: true
