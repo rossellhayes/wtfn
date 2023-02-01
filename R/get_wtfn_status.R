@@ -35,7 +35,9 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 		message <- c(
 			message,
 			"i" = "{fun$cli_pkg} is not a declared dependency.",
-			"*" = 'Use {.run usethis::use_package("{fun$pkg}")} to add it as a dependency.'
+			"*" = 'Use {.run usethis::use_package("{fun$pkg}")} to import it as a dependency.',
+			"*" = 'Or use {.run usethis::use_package("{fun$pkg}", "Suggests")} to suggest it
+			  as a dependency.'
 		)
 
 		return(list(headline = headline, message = message, can_use = FALSE))
