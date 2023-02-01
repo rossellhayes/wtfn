@@ -10,7 +10,7 @@
 #'   can use `fun` in your package given its current dependencies.
 #'
 #'   You can set a default value for `verbose` using
-#'   [`options("wtfn.verbose" =)`][options].
+#'   [`options("wtfn.verbose" = )`][options].
 #'   If the option is unset, defaults to [`TRUE`].
 #'
 #' @return Invisibly returns [`TRUE`] if you can use `fun` in your package

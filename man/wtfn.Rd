@@ -15,7 +15,7 @@ If \code{verbose} is \code{\link{FALSE}}, \code{wtfn()} prints a single line ind
 can use \code{fun} in your package given its current dependencies.
 
 You can set a default value for \code{verbose} using
-\code{\link[=options]{options("wtfn.verbose" =)}}.
+\code{\link[=options]{options("wtfn.verbose" = )}}.
 If the option is unset, defaults to \code{\link{TRUE}}.}
 }
 \value{
