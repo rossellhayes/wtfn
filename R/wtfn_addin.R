@@ -41,7 +41,7 @@ function_under_cursor <- function() {
 	]
 
 	if (nrow(found_symbol) == 0) {
-		cli::cli_div(theme = cli_theme_wtfn)
+		cli::cli_div(theme = cli_theme_wtfn())
 		cli::cli_inform(c("?" = "What's the function?"))
 		code <- readline("> ")
 		return(code)

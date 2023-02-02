@@ -10,7 +10,7 @@ generate_backports_message <- function(fun, description) {
 	if (nrow(backport) > 0) {
 		backport_version <- backport$version[[1]]
 
-		cli::cli_div(theme = cli_theme_wtfn)
+		cli::cli_div(theme = cli_theme_wtfn())
 
 		c(
 			"!" = cli::format_inline(
