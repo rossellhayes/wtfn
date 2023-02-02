@@ -6,12 +6,21 @@ get_namespace_imports <- function(file = ".") {
 	namespace_exprs <- rlang::parse_exprs(namespace)
 	importFrom_exprs <- purrr::keep(
 		namespace_exprs,
-		function(x) identical(x[[1]], rlang::sym("importFrom"))
+		function(x) {
+			identical(x[[1]], rlang::sym("importFrom"))
+		}
 	)
 
-	purrr::map_dfr(
-		importFrom_exprs,
-		function(x) c(pkg = as.character(x[[2]]), fun = as.character(x[[3]]))
+	dplyr::bind_rows(
+		purrr::map(
+			importFrom_exprs,
+			function(x) {
+				x <- as.character(x)
+				x <- x[-1] # Remove function, leaving only arguments
+				names(x) <- c("pkg", "fun")
+				x
+			}
+		)
 	)
 }
 

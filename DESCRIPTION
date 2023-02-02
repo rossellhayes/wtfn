@@ -21,6 +21,7 @@ Imports:
     purrr,
     R6,
     rlang,
+    rprojroot,
     utils
 Suggests: 
     backports,

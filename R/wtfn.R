@@ -31,7 +31,7 @@ wtfn <- function(fun, verbose = getOption("wtfn.verbose", default = TRUE)) {
 		"{.strong ", wtfn_status$headline, "}"
 	)
 
-	cli::cli_div(theme = cli_theme_wtfn)
+	cli::cli_div(theme = cli_theme_wtfn())
 
 	if (!verbose && cli::ansi_has_hyperlink_support()) {
 		cli::cli_div(theme = list(
@@ -63,27 +63,31 @@ unquote <- function(x) {
 	gsub("[\"']", "", x, perl = TRUE)
 }
 
-cli_theme_wtfn <- list(
-	span.run = list(
-		transform = function(x) {
-			if (cli::ansi_has_hyperlink_support()) {
-				x <- cli::builtin_theme()$span.run$transform(x)
+cli_theme_wtfn <- function() {
+	list(
+		span.href = list(color = "blue"),
+		span.run = list(
+			color = "blue",
+			transform = function(x) {
+				if (cli::ansi_has_hyperlink_support()) {
+					x <- cli::builtin_theme()$span.run$transform(x)
+				}
+				cli::builtin_theme()$span.code$transform(x)
 			}
-			cli::builtin_theme()$span.code$transform(x)
-		}
-	),
-	span.var = list(
-		color = "blue",
-		transform = function(x) {
-			if (cli::ansi_grepl("^`.*`$", x)) return(x)
-			if (cli::ansi_grepl("`", x, fixed = TRUE)) return(paste0("`` ", x, " ``"))
-			paste0("`", x, "`")
-		}
-	),
-	`.bullets .bullet-?` = list(
-		`text-exdent` = 2,
-		before = function(x) {
-			paste0(cli::col_cyan(cli::style_bold("?")), " ")
-		}
+		),
+		span.var = list(
+			color = "blue",
+			transform = function(x) {
+				if (cli::ansi_grepl("^`.*`$", x)) return(x)
+				if (cli::ansi_grepl("`", x, fixed = TRUE)) return(paste0("`` ", x, " ``"))
+				paste0("`", x, "`")
+			}
+		),
+		`.bullets .bullet-?` = list(
+			`text-exdent` = 2,
+			before = function(x) {
+				paste0(cli::col_cyan(cli::style_bold("?")), " ")
+			}
+		)
 	)
-)
+}

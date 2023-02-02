@@ -1,5 +1,5 @@
 get_wtfn_status <- function(fun, description, namespace_imports) {
-	cli::cli_div(theme = cli_theme_wtfn)
+	cli::cli_div(theme = cli_theme_wtfn())
 
 	message <- c("i" = "{fun$cli_name} is from {fun$cli_pkg}.")
 
@@ -45,8 +45,9 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 
 	message <- c(
 		message,
-		"i" = cli::format_inline(
-			"{fun$cli_pkg} is declared in {.val {dependency_type}}."
+		"i" = paste0(
+			cli::format_inline("{fun$cli_pkg} is declared in "),
+			get_desc_declaration(fun$pkg, dependency_type), "."
 		)
 	)
 
@@ -102,4 +103,33 @@ get_wtfn_status <- function(fun, description, namespace_imports) {
 	)
 
 	list(headline = headline, message = message, can_use = TRUE)
+}
+
+# @staticimports pkg:stringstatic
+#   str_detect str_which
+
+get_desc_declaration <- function(package, dependency_type) {
+	desc_file <- fs::path(
+		rprojroot::find_root(rprojroot::is_r_package, "."),
+		"DESCRIPTION"
+	)
+
+	desc_lines <- readLines(desc_file)
+
+	dependency_type_line <- str_which(
+		desc_lines, sprintf("^%s:", dependency_type)
+	)[[1]]
+
+	package_line <- dependency_type_line + str_which(
+		desc_lines[seq.int(dependency_type_line + 1, length(desc_lines))],
+		sprintf("^\\s*%s,?\\s*", package)
+	)
+
+	cli::cli_div(theme = cli_theme_wtfn())
+
+	cli::style_hyperlink(
+		cli::col_blue(dependency_type),
+		paste0("file://", desc_file),
+		list(line = package_line)
+	)
 }
