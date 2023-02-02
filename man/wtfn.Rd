@@ -4,7 +4,7 @@
 \alias{wtfn}
 \title{Where's this function?}
 \usage{
-wtfn(fun, verbose = TRUE)
+wtfn(fun, verbose = getOption("wtfn.verbose", default = TRUE))
 }
 \arguments{
 \item{fun}{A function, as either a character string or a symbol}
@@ -13,7 +13,10 @@ wtfn(fun, verbose = TRUE)
 If \code{verbose} is \code{\link{TRUE}}, \code{wtfn()} prints all information about \code{fun}.
 If \code{verbose} is \code{\link{FALSE}}, \code{wtfn()} prints a single line indicating if you
 can use \code{fun} in your package given its current dependencies.
-Defaults to \code{\link{TRUE}}.}
+
+You can set a default value for \code{verbose} using
+\code{\link[=options]{options("wtfn.verbose" = )}}.
+If the option is unset, defaults to \code{\link{TRUE}}.}
 }
 \value{
 Invisibly returns \code{\link{TRUE}} if you can use \code{fun} in your package

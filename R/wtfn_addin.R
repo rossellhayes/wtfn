@@ -1,9 +1,19 @@
 wtfn_addin <- function() {
-	wtfn(function_under_cursor(), verbose = TRUE)
+	wtfn(
+		function_under_cursor(),
+		verbose = getOption(
+			"wtfn.verbose",
+			default = !cli::ansi_has_hyperlink_support()
+		)
+	)
 }
 
 wtfn_addin_short <- function() {
 	wtfn(function_under_cursor(), verbose = FALSE)
+}
+
+wtfn_addin_verbose <- function() {
+	wtfn(function_under_cursor(), verbose = TRUE)
 }
 
 function_under_cursor <- function() {
